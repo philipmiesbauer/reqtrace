@@ -13,6 +13,8 @@ class GitMetadata:
 
     author: str
     timestamp: int  # Unix timestamp
+    commit_hash: Optional[str] = None
+    commit_subject: Optional[str] = None
 
 
 def _run_git(args: List[str], cwd: Optional[Path] = None) -> str:
@@ -36,14 +38,22 @@ def get_line_metadata(filepath: Path, line_number: int) -> Optional[GitMetadata]
 
     lines = output.splitlines()
     data: Dict[str, str] = {}
+    commit_hash = None
+    if lines and len(lines[0]) >= 40:
+        commit_hash = lines[0].split(" ")[0]
+
     for line in lines:
         if line.startswith("author "):
             data["author"] = line[7:]
         elif line.startswith("author-time "):
             data["timestamp"] = line[12:]
+        elif line.startswith("summary "):
+            data["subject"] = line[8:]
 
     if "author" in data and "timestamp" in data:
-        return GitMetadata(author=data["author"], timestamp=int(data["timestamp"]))
+        return GitMetadata(
+            author=data["author"], timestamp=int(data["timestamp"]), commit_hash=commit_hash, commit_subject=data.get("subject")
+        )
 
     return None
 
@@ -53,14 +63,16 @@ def get_file_first_commit(filepath: Path) -> Optional[GitMetadata]:
     Gets the metadata for the very first commit of a file.
     Gives a rough 'written' date for requirements.
     """
-    # git log --reverse --format="%at %an" --limit 1 -- filepath
-    output = _run_git(["log", "--reverse", "--format=%at %an", "-n", "1", "--", str(filepath)])
+    # git log --reverse --format="%at %an%n%H%n%s" --limit 1 -- filepath
+    output = _run_git(["log", "--reverse", "--format=%at %an%n%H%n%s", "-n", "1", "--", str(filepath)])
     if not output:
         return None
 
-    parts = output.strip().split(" ", 1)
-    if len(parts) == 2:
-        return GitMetadata(author=parts[1], timestamp=int(parts[0]))
+    lines = output.strip().split("\n")
+    if len(lines) >= 3:
+        parts = lines[0].split(" ", 1)
+        if len(parts) == 2:
+            return GitMetadata(author=parts[1], timestamp=int(parts[0]), commit_hash=lines[1], commit_subject=lines[2])
 
     return None
 
@@ -70,14 +82,17 @@ def get_line_first_commit(filepath: Path, line_number: int) -> Optional[GitMetad
     Tries to find the first commit that introduced a specific line.
     Uses git log -L which can be slow but accurate for history.
     """
-    # git log -L <start>,<end>:<file> --reverse --format="%at %an" -n 1
+    # git log -L <start>,<end>:<file> --reverse --format="%at %an%n%H%n%s" -n 1
     # Note: -L is 1-indexed
-    output = _run_git(["log", f"-L{line_number},{line_number}:{filepath}", "--reverse", "--format=%at %an", "-n", "1"])
+    output = _run_git(["log", f"-L{line_number},{line_number}:{filepath}", "--reverse", "--format=%at %an%n%H%n%s", "-n", "1"])
     if not output:
         return None
 
-    parts = output.strip().split(" ", 1)
-    if len(parts) == 2:
-        return GitMetadata(author=parts[1], timestamp=int(parts[0]))
+    # git log -L also outputs the diff, but the format string outputs the requested fields first
+    lines = output.strip().split("\n")
+    if len(lines) >= 3:
+        parts = lines[0].split(" ", 1)
+        if len(parts) == 2:
+            return GitMetadata(author=parts[1], timestamp=int(parts[0]), commit_hash=lines[1], commit_subject=lines[2])
 
     return None
