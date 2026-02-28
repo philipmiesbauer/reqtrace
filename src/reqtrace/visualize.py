@@ -93,9 +93,7 @@ header {
 h1 {
     font-size: 2.5rem;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--accent-blue);
     margin: 0;
     font-weight: 800;
 }
@@ -170,7 +168,7 @@ h1 {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+    background: var(--accent-blue);
 }
 
 table {
@@ -509,12 +507,3 @@ def generate_html_directory(index: RequirementIndex, report: CoverageReport, out
     """Entry point for generating the multi-page report."""
     generator = MultiPageGenerator(index, report, output_dir)
     generator.generate()
-
-
-# Keep original function for backward compatibility if needed,
-# but point it to a single-file generator if strictly necessary.
-# For now, let's just use the directory one.
-def generate_html(index: RequirementIndex, report: CoverageReport) -> str:
-    """Original signature, returns a single-page HTML string (legacy)."""
-    # pylint: disable=unused-argument
-    return "Please use generate_html_directory instead."
