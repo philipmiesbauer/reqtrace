@@ -11,13 +11,16 @@ def test_scan_file_regex(tmp_path):
     src_file.write_text(
         """
 def my_func():
-    # @trace: REQ-001
+    # @trace-start: REQ-001
     pass
+    # @trace-end: REQ-001
 
 def my_func_partial():
-    # @trace: REQ-002 (45%)
-    # @trace: REQ-003( 100 %)  # Spaces should be tolerated
+    # @trace-start: REQ-002 (45%)
+    # @trace-start: REQ-003( 100 %)  # Spaces should be tolerated
     return True
+    # @trace-end: REQ-002
+    # @trace-end: REQ-003
 """
     )
 
@@ -26,15 +29,18 @@ def my_func_partial():
 
     assert matches[0].req_id == "REQ-001"
     assert matches[0].percentage is None
-    assert matches[0].line_number == 3
+    assert matches[0].line_start == 3
+    assert matches[0].line_end == 5
 
     assert matches[1].req_id == "REQ-002"
     assert matches[1].percentage == 45
-    assert matches[1].line_number == 7
+    assert matches[1].line_start == 8
+    assert matches[1].line_end == 11
 
     assert matches[2].req_id == "REQ-003"
     assert matches[2].percentage == 100
-    assert matches[2].line_number == 8
+    assert matches[2].line_start == 9
+    assert matches[2].line_end == 12
 
 
 def test_scan_directory_respects_gitignore(tmp_path):
@@ -45,11 +51,11 @@ def test_scan_directory_respects_gitignore(tmp_path):
 
     # Valid file
     valid_file = tmp_path / "src" / "main.py"
-    valid_file.write_text("# @trace: REQ-VALID")
+    valid_file.write_text("# @trace-start: REQ-VALID\n# @trace-end: REQ-VALID\n")
 
     # Ignored by default hidden rule
     git_file = tmp_path / ".git" / "config"
-    git_file.write_text("# @trace: REQ-INVALID")
+    git_file.write_text("# @trace-start: REQ-INVALID\n# @trace-end: REQ-INVALID\n")
 
     # Ignored by custom .gitignore
     gitignore = tmp_path / ".gitignore"
@@ -57,7 +63,7 @@ def test_scan_directory_respects_gitignore(tmp_path):
 
     (tmp_path / "ignored_dir").mkdir()
     ignored_file = tmp_path / "ignored_dir" / "secret.py"
-    ignored_file.write_text("# @trace: REQ-INVALID2")
+    ignored_file.write_text("# @trace-start: REQ-INVALID2\n# @trace-end: REQ-INVALID2\n")
 
     matches = scan_directory(tmp_path)
 
