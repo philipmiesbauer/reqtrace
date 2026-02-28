@@ -2,7 +2,7 @@
 Logic for calculating the requirement coverage matrix.
 """
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from .models import RequirementIndex, TraceMatch
 
 
@@ -28,36 +28,66 @@ class CoverageReport:
     unmatched_traces: List[TraceMatch] = field(default_factory=list)
 
 
-def calculate_coverage(index: RequirementIndex, traces: List[TraceMatch]) -> CoverageReport:
-    """Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix."""
-
+def _apply_direct_traces(index: RequirementIndex, traces: List[TraceMatch]) -> Tuple[Dict[str, RequirementCoverage], List[TraceMatch]]:
     details: Dict[str, RequirementCoverage] = {}
     unmatched: List[TraceMatch] = []
 
-    # Initialize the coverage details dictionary with 0% for all known requirements
     for req_id in index.requirements:
         details[req_id] = RequirementCoverage(req_id=req_id, is_implemented=False, total_percentage=0, matches=[])
 
-    # Apply traces to their corresponding requirements
     for trace in traces:
         if trace.req_id in details:
             target = details[trace.req_id]
             target.matches.append(trace)
-
-            # If percentage is None, assume 100% (the whole thing is implemented here)
-            # Otherwise add up the specific percentage
             added_pct = trace.percentage if trace.percentage is not None else 100
             target.total_percentage += added_pct
         else:
-            # We found a tag in the source code pointing to a requirement that isn't defined
             unmatched.append(trace)
 
-    # Calculate final status
+    return details, unmatched
+
+
+def _build_reverse_mapping(index: RequirementIndex) -> Dict[str, List[str]]:
+    children: Dict[str, List[str]] = {req_id: [] for req_id in index.requirements}
+    for req in index.requirements.values():
+        for parent_id in req.derived_from:
+            if parent_id in children:
+                children[parent_id].append(req.id)
+    return children
+
+
+def _calculate_rollups(index: RequirementIndex, details: Dict[str, RequirementCoverage]) -> None:
+    children = _build_reverse_mapping(index)
+    computed_totals: Dict[str, int] = {}
+
+    def compute_total(req_id: str) -> int:
+        if req_id in computed_totals:
+            return computed_totals[req_id]
+
+        direct_pct = details[req_id].total_percentage
+        child_ids = children[req_id]
+
+        if not child_ids:
+            rollup = 0
+        else:
+            rollup_sum = sum(min(100, compute_total(cid)) for cid in child_ids)
+            rollup = rollup_sum // len(child_ids)
+
+        full_total = direct_pct + rollup
+        computed_totals[req_id] = full_total
+        details[req_id].total_percentage = full_total
+        return full_total
+
+    for req_id in index.requirements:
+        compute_total(req_id)
+
+
+def _build_report(index: RequirementIndex, details: Dict[str, RequirementCoverage], unmatched: List[TraceMatch]) -> CoverageReport:
     implemented_count = 0
     partial_count = 0
     missing_count = 0
 
-    for req_id, cov in details.items():
+    for cov in details.values():
         if cov.total_percentage >= 100:
             cov.is_implemented = True
             implemented_count += 1
@@ -74,3 +104,10 @@ def calculate_coverage(index: RequirementIndex, traces: List[TraceMatch]) -> Cov
         coverage_details=details,
         unmatched_traces=unmatched,
     )
+
+
+def calculate_coverage(index: RequirementIndex, traces: List[TraceMatch]) -> CoverageReport:
+    """Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix."""
+    details, unmatched = _apply_direct_traces(index, traces)
+    _calculate_rollups(index, details)
+    return _build_report(index, details, unmatched)
