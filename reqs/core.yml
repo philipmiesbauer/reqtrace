@@ -18,6 +18,11 @@
   derived_from: [SYS-SCAN]
   description: The system must recursively scan directories.
 
+- id: REQ-SCAN-FILE
+  title: File Traversal
+  derived_from: [REQ-SCAN-DIR]
+  description: The system must scan files in directories of type reqs.
+
 - id: REQ-CLI
   title: Command Line Interface
   derived_from: [SYS-CI]

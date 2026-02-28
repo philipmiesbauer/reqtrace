@@ -71,22 +71,34 @@ def test_coverage_rollup():
     index.add(Requirement(id="P3", title="Parent 3"))
     index.add(Requirement(id="C4", title="Child 4", derived_from=["P3"]))
 
+    # P4 has direct coverage of 100% but one child with 0%. Expected rollup: 99%
+    index.add(Requirement(id="P4", title="Parent 4"))
+    index.add(Requirement(id="C5", title="Child 5", derived_from=["P4"]))
+
     traces = [
         TraceMatch(file_path="foo.py", line_number=1, req_id="C1"),
         TraceMatch(file_path="foo.py", line_number=2, req_id="C2", percentage=50),
         TraceMatch(file_path="foo.py", line_number=3, req_id="C3", percentage=150),
         TraceMatch(file_path="foo.py", line_number=4, req_id="P3", percentage=20),
         TraceMatch(file_path="foo.py", line_number=5, req_id="C4", percentage=50),
+        TraceMatch(file_path="foo.py", line_number=6, req_id="P4", percentage=100),
     ]
 
     report = calculate_coverage(index, traces)
 
     assert report.coverage_details["C1"].total_percentage == 100
     assert report.coverage_details["C2"].total_percentage == 50
-    assert report.coverage_details["P1"].total_percentage == 75
+    # P1 has 0% direct, children are (100+50)/2 = 75%. Child contribution is 75 // 2 = 37%
+    assert report.coverage_details["P1"].total_percentage == 37
 
     assert report.coverage_details["C3"].total_percentage == 150
-    assert report.coverage_details["P2"].total_percentage == 100
+    # P2 has 0% direct, children are min(100, 150) = 100%. Child contribution is 100 // 2 = 50%
+    assert report.coverage_details["P2"].total_percentage == 50
 
     assert report.coverage_details["C4"].total_percentage == 50
-    assert report.coverage_details["P3"].total_percentage == 70
+    # P3 has 20% direct. Direct contribution = 10%. Children are 50%. Child contribution = 25%. Total = 35%
+    assert report.coverage_details["P3"].total_percentage == 35
+
+    assert report.coverage_details["C5"].total_percentage == 0
+    # P4 has 100% direct. Direct contribution = 50%. Children are 0%. Child contribution = 0%. Total = 50%
+    assert report.coverage_details["P4"].total_percentage == 50
