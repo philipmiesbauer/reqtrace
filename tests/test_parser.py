@@ -2,7 +2,7 @@
 Tests for the reqtrace parser and YAML loading logic.
 """
 import pytest
-from reqtrace.parser import parse_requirements
+from reqtrace.analysis.parser import parse_requirements
 
 
 def test_valid_requirements():

@@ -7,11 +7,11 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Tuple, Dict
 
-from .scanner import scan_directory, scan_file
-from .coverage import calculate_coverage
+from .analysis.scanner import scan_directory, scan_file
+from .analysis.coverage import calculate_coverage
 from .models import TraceMatch
-from .parser import load_yaml, parse_requirements
-from .visualise import enrich_metadata, generate_html
+from .analysis.parser import load_yaml, parse_requirements
+from .reporting.visualise import enrich_metadata, generate_html
 
 log = logging.getLogger(__name__)
 
