@@ -11,7 +11,7 @@ from .scanner import scan_directory, scan_file
 from .coverage import calculate_coverage
 from .models import TraceMatch
 from .parser import load_yaml, parse_requirements
-from .visualize import enrich_metadata, generate_html
+from .visualize import enrich_metadata, generate_html, generate_html_directory
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +57,7 @@ def _load_source_code(src_path_strs: List[str]) -> List[TraceMatch]:
 
 def main(args: Optional[List[str]] = None):
     """CLI Entrypoint for reqtrace."""
+    # pylint: disable=too-many-locals
     # @trace: REQ-CLI
     parser = argparse.ArgumentParser(description="Reqtrace: A GitOps-friendly requirements tracer.")
 
@@ -81,7 +82,13 @@ def main(args: Optional[List[str]] = None):
     parser.add_argument(
         "--html",
         metavar="FILE",
-        help="Generate a fancy HTML report at the specified path.",
+        help="Generate a single-file HTML report (Legacy).",
+    )
+
+    parser.add_argument(
+        "--html-dir",
+        metavar="DIR",
+        help="Generate a structured multi-page HTML report in the specified directory.",
     )
 
     parsed_args = parser.parse_args(args)
@@ -106,12 +113,19 @@ def main(args: Optional[List[str]] = None):
         report = calculate_coverage(req_index, all_traces)
 
         # 4. Generate HTML Report (if requested)
-        if parsed_args.html:
+        if parsed_args.html or parsed_args.html_dir:
             enrich_metadata(req_index, report)
-            html_content = generate_html(req_index, report)
-            output_path = Path(parsed_args.html)
-            output_path.write_text(html_content, encoding="utf-8")
-            log.info("HTML report generated at: %s", output_path.absolute())
+
+            if parsed_args.html_dir:
+                output_dir = Path(parsed_args.html_dir)
+                generate_html_directory(req_index, report, output_dir)
+                log.info("Multi-page HTML report generated at: %s", output_dir.absolute())
+
+            if parsed_args.html:
+                html_content = generate_html(req_index, report)
+                output_path = Path(parsed_args.html)
+                output_path.write_text(html_content, encoding="utf-8")
+                log.info("Single-file HTML report generated at: %s", output_path.absolute())
 
         # 5. Print Summary to Console (plain output)
         print("\n=== REQTRACE COVERAGE REPORT ===")
