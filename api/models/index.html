@@ -439,7 +439,7 @@ class Requirement:
 
 
 
-        <p>A trace tag found within the source code.</p>
+        <p>A trace tag block found within the source code.</p>
 
 
 
@@ -452,27 +452,30 @@ class Requirement:
                 <summary>Source code in <code>reqtrace/models.py</code></summary>
                 <pre class="highlight"><code class="language-python">@dataclass
 class TraceMatch:
-    """A trace tag found within the source code."""
+    """A trace tag block found within the source code."""
 
     file_path: str
-    line_number: int
+    line_start: int
+    line_end: int
     req_id: str
     percentage: Optional[int] = None
     hash: Optional[str] = None
 
     # Git Metadata (optional, filled during analysis)
+    history: List[GitMetadata] = field(default_factory=list)
     first_implemented: Optional[GitMetadata] = None
     last_changed: Optional[GitMetadata] = None
 
     def __hash__(self):
-        return hash((self.file_path, self.line_number, self.req_id, self.percentage, self.hash))
+        return hash((self.file_path, self.line_start, self.line_end, self.req_id, self.percentage, self.hash))
 
     def __eq__(self, other):
         if not isinstance(other, TraceMatch):
             return False
         return (
             self.file_path == other.file_path
-            and self.line_number == other.line_number
+            and self.line_start == other.line_start
+            and self.line_end == other.line_end
             and self.req_id == other.req_id
             and self.percentage == other.percentage
             and self.hash == other.hash

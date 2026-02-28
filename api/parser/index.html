@@ -302,7 +302,7 @@
               <summary>Source code in <code>reqtrace/parser.py</code></summary>
               <pre class="highlight"><code class="language-python">def parse_requirements(data: List[Dict[str, Any]]) -&gt; RequirementIndex:
     """Parses a list of dictionaries into a validated RequirementIndex."""
-    # @trace: REQ-PARSE
+    # @trace-start: REQ-PARSE
     index = RequirementIndex()
 
     for item in data:
@@ -326,6 +326,7 @@
 
     # Validate the entire graph after loading all items
     index.validate_graph()
+    # @trace-end: REQ-PARSE
     return index</code></pre>
             </details>
     </div>
