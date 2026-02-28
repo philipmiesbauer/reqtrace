@@ -213,6 +213,27 @@ pre {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
 }
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0 4px;
+    margin-right: 4px;
+    transition: transform 0.2s;
+    outline: none;
+}
+.toggle-btn:hover {
+    color: var(--accent-blue);
+}
+.toggle-btn.collapsed {
+    transform: rotate(-90deg);
+}
+.hidden-row {
+    display: none !important;
+}
 """
 
 
@@ -374,19 +395,28 @@ class MultiPageGenerator:
 
         rows = ""
 
-        def render_node(req_id: str, depth: int) -> str:
+        def render_node(req_id: str, depth: int, parent_id: str = "") -> str:
             req = self.index.requirements[req_id]
             cov = self.report.coverage_details[req_id]
             status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
             status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
 
             padding_left = 0.75 + (depth * 2)  # Base padding + 2rem per depth level
-            prefix = "└─ " if depth > 0 else ""
+
+            has_children = len(children_map[req_id]) > 0
+
+            if has_children:
+                toggle_btn = f'<button class="toggle-btn" id="btn-{req_id}" onclick="toggleRow(\'{req_id}\')">▼</button>'
+            else:
+                prefix = "└─ " if depth > 0 else ""
+                toggle_btn = f"<span style=\"color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center\">{prefix}</span>"
+
+            parent_attr = f'data-parent="{parent_id}"' if parent_id else ""
 
             row_html = f"""
-            <tr>
-                <td style="padding-left: {padding_left}rem">
-                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace">{prefix}</span>
+            <tr id="row-{req_id}" {parent_attr}>
+                <td style="padding-left: {padding_left}rem; white-space: nowrap;">
+                    {toggle_btn}
                     <a href="{req_id}.html" class="link">{req_id}</a>
                 </td>
                 <td>{req.title}</td>
@@ -402,7 +432,7 @@ class MultiPageGenerator:
 
             child_rows = ""
             for child_id in sorted(children_map[req_id]):
-                child_rows += render_node(child_id, depth + 1)
+                child_rows += render_node(child_id, depth + 1, req_id)
 
             return row_html + child_rows
 
@@ -426,6 +456,35 @@ class MultiPageGenerator:
                 </tbody>
             </table>
         </div>
+        <script>
+        function toggleRow(reqId) {{
+            const btn = document.getElementById('btn-' + reqId);
+            if (!btn) return;
+            btn.classList.toggle('collapsed');
+
+            const tableRows = document.querySelectorAll('tr[data-parent]');
+            tableRows.forEach(row => {{
+                let parent = row.getAttribute('data-parent');
+                let shouldHide = false;
+
+                while (parent) {{
+                    const parentBtn = document.getElementById('btn-' + parent);
+                    if (parentBtn && parentBtn.classList.contains('collapsed')) {{
+                        shouldHide = true;
+                        break;
+                    }}
+                    const parentRow = document.getElementById('row-' + parent);
+                    parent = parentRow ? parentRow.getAttribute('data-parent') : null;
+                }}
+
+                if (shouldHide) {{
+                    row.classList.add('hidden-row');
+                }} else {{
+                    row.classList.remove('hidden-row');
+                }}
+            }});
+        }}
+        </script>
         """
         html = self._get_layout("Requirements", content, depth=1)
         (self.output_dir / "requirements" / "index.html").write_text(html)
