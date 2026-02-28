@@ -493,12 +493,28 @@ class MultiPageGenerator:
 
     def _write_requirement_details(self):
         """Writes detail page for each requirement."""
+        # pylint: disable=too-many-locals,too-many-branches
         # Pre-compute children for all requirements
         children_map = {req_id: [] for req_id in self.index.requirements}
         for req in self.index.requirements.values():
             for parent_id in req.derived_from:
                 if parent_id in children_map:
                     children_map[parent_id].append(req.id)
+
+        # Pre-compute descendant traces
+        descendant_traces_map = {}
+        for rid in self.index.requirements:
+            traces = []
+            stack = [rid]
+            while stack:
+                current_id = stack.pop()
+                for child_id in children_map.get(current_id, []):
+                    child_cov = self.report.coverage_details[child_id]
+                    for match in child_cov.matches:
+                        traces.append((child_id, match))
+                    stack.append(child_id)
+            traces.sort(key=lambda x: (x[1].file_path, x[1].line_number))
+            descendant_traces_map[rid] = traces
 
         for rid, req in self.index.requirements.items():
             cov = self.report.coverage_details[rid]
@@ -521,7 +537,35 @@ class MultiPageGenerator:
                 """
 
             if not traces:
-                traces = "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No implementation traces found.</div>"
+                traces = (
+                    "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No direct implementation traces found.</div>"
+                )
+
+            child_traces_html = ""
+            for child_id, m in descendant_traces_map[rid]:
+                m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
+                child_traces_html += f"""
+                <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                        <span style="margin-left:8px; font-size:0.75rem; color:var(--text-secondary)">via <a href="{child_id}.html" class="link">{child_id}</a></span>
+                        <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
+                    </div>
+                    <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
+                </div>
+                """
+
+            if not child_traces_html:
+                child_traces_html = "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No derived implementation traces found.</div>"
+
+            child_card = ""
+            if len(children_map.get(rid, [])) > 0:
+                child_card = f"""
+            <div class="card" style="margin-top:2rem">
+                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Derived Implementation Traces</h3>
+                {child_traces_html}
+            </div>
+                """
 
             parents_html = " , ".join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"
             children_html = " , ".join([f'<a href="{c}.html" class="link">{c}</a>' for c in sorted(children_map[rid])]) or "None"
@@ -565,9 +609,10 @@ class MultiPageGenerator:
             </div>
 
             <div class="card" style="margin-top:2rem">
-                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Implementation Traces</h3>
+                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Direct Implementation Traces</h3>
                 {traces}
             </div>
+            {child_card}
             """
             html = self._get_layout(f"Detail {rid}", content, depth=1)
             (self.output_dir / "requirements" / f"{rid}.html").write_text(html)
