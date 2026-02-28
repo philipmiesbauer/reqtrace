@@ -2,7 +2,7 @@
 Tests for the requirement coverage calculation.
 """
 from reqtrace.models import Requirement, RequirementIndex, TraceMatch
-from reqtrace.coverage import calculate_coverage
+from reqtrace.analysis.coverage import calculate_coverage
 
 
 def test_coverage_calculation():

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Union
 import yaml
 
-from .models import Requirement, RequirementIndex
+from ..models import Requirement, RequirementIndex
 
 
 # pylint: disable=too-many-ancestors

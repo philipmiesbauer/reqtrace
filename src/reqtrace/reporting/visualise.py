@@ -6,9 +6,9 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from .coverage import CoverageReport
-from .git import get_line_first_commit, get_line_metadata, get_range_commits
-from .models import RequirementIndex
+from ..analysis.coverage import CoverageReport
+from ..git import get_line_first_commit, get_line_metadata, get_range_commits
+from ..models import RequirementIndex
 from .source_tree import build_source_tree, render_source_tree_node, rollup_source_tree
 
 log = logging.getLogger(__name__)

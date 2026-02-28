@@ -3,7 +3,7 @@ Logic for calculating the requirement coverage matrix.
 """
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple, Optional
-from .models import RequirementIndex, TraceMatch, SourceStats, FileStats
+from ..models import RequirementIndex, TraceMatch, SourceStats, FileStats
 
 
 @dataclass

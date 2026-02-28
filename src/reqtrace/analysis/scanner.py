@@ -4,10 +4,10 @@ Scanner for finding trace tags in source code files.
 import re
 import os
 from pathlib import Path
-from typing import List, Union, Tuple, Dict
+from typing import Dict, List, Tuple, Union
 import pathspec
 
-from .models import TraceMatch
+from ..models import TraceMatch
 
 # Matches e.g. "@ trace-start: REQUIRE-123" (ignore the space to avoid false positives)
 # or "@ trace-start: REQUIRE-123 (50%)"

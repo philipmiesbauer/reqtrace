@@ -1,7 +1,7 @@
 """
 Tests for source code requirement tag scanning.
 """
-from reqtrace.scanner import scan_file, scan_directory
+from reqtrace.analysis.scanner import scan_file, scan_directory
 
 
 def test_scan_file_regex(tmp_path):

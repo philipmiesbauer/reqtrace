@@ -1,10 +1,11 @@
 """
 Source code tree logic for the reqtrace HTML visualization report.
 """
-from typing import Dict, List, Optional
-from pathlib import Path
 from dataclasses import dataclass, field
-from .models import FileStats
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from ..models import FileStats
 
 
 @dataclass
