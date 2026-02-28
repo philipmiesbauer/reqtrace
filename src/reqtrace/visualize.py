@@ -1,5 +1,5 @@
 """
-HTML visualization generator for reqtrace reports.
+Multi-page HTML visualization generator for reqtrace reports.
 """
 import datetime
 import logging
@@ -10,6 +10,212 @@ from .coverage import CoverageReport
 from .git import get_line_metadata, get_line_first_commit
 
 log = logging.getLogger(__name__)
+
+# Common CSS for all pages
+COMMON_CSS = """
+:root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(23, 31, 48, 0.7);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #38bdf8;
+    --accent-green: #4ade80;
+    --accent-yellow: #fbbf24;
+    --accent-red: #f87171;
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --nav-bg: rgba(15, 23, 42, 0.8);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+nav {
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.75rem 0;
+}
+
+.nav-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.nav-logo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--accent-blue);
+}
+
+header {
+    margin-bottom: 3rem;
+    text-align: center;
+    padding-top: 2rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    font-weight: 800;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    display: inline-block;
+}
+
+.badge-success { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+.badge-warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+.badge-error { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th {
+    text-align: left;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+pre {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+}
+"""
 
 
 def enrich_metadata(index: RequirementIndex, report: CoverageReport):
@@ -41,396 +247,274 @@ def _format_date(timestamp: Optional[int]) -> str:
     return datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
 
 
-def generate_html(index: RequirementIndex, report: CoverageReport) -> str:
-    """Generates a fancy HTML report string."""
-    # pylint: disable=too-many-locals
+class MultiPageGenerator:
+    """Generates a multi-page HTML report."""
 
-    css = """
-    :root {
-        --bg-color: #0b0f19;
-        --card-bg: rgba(23, 31, 48, 0.7);
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --accent-blue: #38bdf8;
-        --accent-green: #4ade80;
-        --accent-yellow: #fbbf24;
-        --accent-red: #f87171;
-        --glass-border: rgba(255, 255, 255, 0.08);
-    }
+    # pylint: disable=too-few-public-methods
 
-    body {
-        background-color: var(--bg-color);
-        color: var(--text-primary);
-        font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-        margin: 0;
-        padding: 2rem;
-        line-height: 1.6;
-    }
+    def __init__(self, index: RequirementIndex, report: CoverageReport, output_dir: Path):
+        self.index = index
+        self.report = report
+        self.output_dir = output_dir
+        self.base_url = "."  # Default relative path from current page to root
 
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-    }
+    def generate(self):
+        """Generates the entire report structure."""
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        (self.output_dir / "requirements").mkdir(exist_ok=True)
+        (self.output_dir / "assets").mkdir(exist_ok=True)
 
-    header {
-        margin-bottom: 4rem;
-        text-align: center;
-        padding-top: 2rem;
-    }
+        # Write assets
+        (self.output_dir / "assets" / "style.css").write_text(COMMON_CSS)
 
-    h1 {
-        font-size: 3rem;
-        letter-spacing: -0.02em;
-        background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0;
-        font-weight: 800;
-    }
+        # Generate pages
+        self._write_index()
+        self._write_requirements_list()
+        self._write_requirement_details()
+        self._write_timeline()
 
-    .subtitle {
-        color: var(--text-secondary);
-        margin-top: 0.5rem;
-        font-size: 1.1rem;
-    }
+    def _get_layout(self, title: str, content: str, depth: int = 0) -> str:
+        """Shared HTML layout with navigation."""
+        base = "../" * depth if depth > 0 else "./"
 
-    .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 4rem;
-    }
-
-    .stat-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        padding: 2rem;
-        border-radius: 1.25rem;
-        text-align: center;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stat-card::after {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; height: 3px;
-        background: var(--accent-blue);
-        opacity: 0.5;
-    }
-
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        color: var(--text-secondary);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-    }
-
-    .req-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-radius: 1.25rem;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    .req-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 1.25rem;
-    }
-
-    .req-title-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .req-id {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--accent-blue);
-    }
-
-    .req-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .badge {
-        padding: 0.4rem 1rem;
-        border-radius: 0.75rem;
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-    }
-
-    .badge-success { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
-    .badge-warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
-    .badge-error { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
-
-    .progress-container {
-        margin: 1.5rem 0;
-    }
-
-    .progress-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
-        transition: width 1s ease-out;
-    }
-
-    .history-section {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--glass-border);
-    }
-
-    .history-title {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
-        letter-spacing: 0.05em;
-    }
-
-    .history-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .history-item {
-        font-size: 0.85rem;
-    }
-
-    .history-label {
-        display: block;
-        color: var(--text-secondary);
-        margin-bottom: 0.25rem;
-    }
-
-    .history-value {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .traces-container {
-        margin-top: 1.5rem;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 0.75rem;
-        padding: 1rem;
-    }
-
-    .trace-item {
-        padding: 0.75rem;
-        border-bottom: 1px solid var(--glass-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-    }
-
-    .trace-item:last-child { border-bottom: none; }
-
-    .trace-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .trace-file {
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        color: var(--accent-blue);
-    }
-
-    .trace-meta {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-
-    .empty-msg {
-        text-align: center;
-        color: var(--text-secondary);
-        padding: 2rem;
-        font-style: italic;
-    }
-    """
-
-    html = f"""<!DOCTYPE html>
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reqtrace Coverage Report</title>
-    <style>{css}</style>
+    <title>{title} - Reqtrace</title>
+    <link rel="stylesheet" href="{base}assets/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav>
+        <div class="nav-content">
+            <a href="{base}index.html" class="nav-logo">Reqtrace</a>
+            <div class="nav-links">
+                <a href="{base}index.html">Dashboard</a>
+                <a href="{base}requirements/index.html">Requirements</a>
+                <a href="{base}timeline.html">Timeline</a>
+            </div>
+        </div>
+    </nav>
     <div class="container">
+        {content}
+    </div>
+</body>
+</html>
+"""
+
+    def _write_index(self):
+        """Writes the dashboard index page."""
+        content = f"""
         <header>
-            <h1>Reqtrace</h1>
-            <div class="subtitle">Requirements Traceability Matrix</div>
+            <h1>Report Dashboard</h1>
+            <div class="subtitle">Traceability Matrix Governance Overview</div>
             <div style="font-size: 0.85rem; margin-top: 1rem; color: var(--text-secondary)">
                 Generated: {_format_date(int(datetime.datetime.now().timestamp()))}
             </div>
         </header>
 
         <div class="summary-grid">
-            <div class="stat-card" style="box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.2); border-top: 3px solid var(--accent-blue)">
-                <span class="stat-value">{report.total_requirements}</span>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-blue)">
+                <span class="stat-value">{self.report.total_requirements}</span>
                 <span class="stat-label">Requirements</span>
             </div>
-            <div class="stat-card" style="box-shadow: 0 10px 25px -5px rgba(74, 222, 128, 0.2); border-top: 3px solid var(--accent-green)">
-                <span class="stat-value" style="color: var(--accent-green)">{report.implemented_requirements}</span>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-green)">
+                <span class="stat-value" style="color: var(--accent-green)">{self.report.implemented_requirements}</span>
                 <span class="stat-label">Full Coverage</span>
             </div>
-            <div class="stat-card" style="box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.2); border-top: 3px solid var(--accent-yellow)">
-                <span class="stat-value" style="color: var(--accent-yellow)">{report.partial_requirements}</span>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-yellow)">
+                <span class="stat-value" style="color: var(--accent-yellow)">{self.report.partial_requirements}</span>
                 <span class="stat-label">Partial Coverage</span>
             </div>
-            <div class="stat-card" style="box-shadow: 0 10px 25px -5px rgba(248, 113, 113, 0.2); border-top: 3px solid var(--accent-red)">
-                <span class="stat-value" style="color: var(--accent-red)">{report.missing_requirements}</span>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-red)">
+                <span class="stat-value" style="color: var(--accent-red)">{self.report.missing_requirements}</span>
                 <span class="stat-label">Missing</span>
             </div>
         </div>
 
-        <h2 style="margin-bottom: 2rem;">Implementation Matrix</h2>
-    """
-
-    # Sort requirements by ID
-    sorted_ids = sorted(index.requirements.keys())
-
-    for req_id in sorted_ids:
-        req = index.requirements[req_id]
-        cov = report.coverage_details[req_id]
-
-        status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
-        status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
-
-        created_at = "Unknown"
-        created_by = "N/A"
-        if req.created:
-            created_at = _format_date(req.created.timestamp)
-            created_by = req.created.author
-
-        last_at = "Unknown"
-        last_by = "N/A"
-        if req.last_changed:
-            last_at = _format_date(req.last_changed.timestamp)
-            last_by = req.last_changed.author
-
-        # Calculate first implemented from traces
-        first_impl_at = "Unknown"
-        first_impl_by = "N/A"
-        if cov.matches:
-            # Sort by timestamp to find earliest
-            matches_with_dates = [m for m in cov.matches if m.first_implemented]
-            if matches_with_dates:
-                # Find min while keeping mypy happy with narrowing
-                earliest = min(matches_with_dates, key=lambda x: x.first_implemented.timestamp if x.first_implemented else 0)
-                if earliest.first_implemented:
-                    first_impl_at = _format_date(earliest.first_implemented.timestamp)
-                    first_impl_by = earliest.first_implemented.author
-
-        html += f"""
-        <div class="req-card">
-            <div class="req-header">
-                <div class="req-title-group">
-                    <span class="req-id">{req.id}</span>
-                    <span class="req-title">{req.title}</span>
-                </div>
-                <span class="badge {status_class}">{status_text}</span>
-            </div>
-
-            <p style="color: var(--text-secondary); margin: 0;">{req.description}</p>
-
-            <div class="progress-container">
-                <div class="progress-header">
-                    <span>Implementation Coverage</span>
-                    <span>{cov.total_percentage}%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {min(100, cov.total_percentage)}%"></div>
-                </div>
-            </div>
-
-            <div class="history-section">
-                <div class="history-title">History & Metadata</div>
-                <div class="history-grid">
-                    <div class="history-item">
-                        <span class="history-label">Requirement Written</span>
-                        <span class="history-value">{created_at}</span> by <i>{created_by}</i>
-                    </div>
-                    <div class="history-item">
-                        <span class="history-label">First Implemented</span>
-                        <span class="history-value">{first_impl_at}</span> by <i>{first_impl_by}</i>
-                    </div>
-                    <div class="history-item">
-                        <span class="history-label">Requirement Last Modified</span>
-                        <span class="history-value">{last_at}</span> by <i>{last_by}</i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="traces-container">
-                <div class="history-title" style="margin-bottom: 0.5rem">Trace Tags Found</div>
-    """
-
-        if not cov.matches:
-            html += '<div class="empty-msg">No implementation traces found for this requirement.</div>'
-        else:
-            for match in cov.matches:
-                match_last = _format_date(match.last_changed.timestamp if match.last_changed else None)
-                match_author = match.last_changed.author if match.last_changed else "Unknown"
-                html += f"""
-                <div class="trace-item">
-                    <div class="trace-info">
-                        <span class="trace-file">{match.file_path}:L{match.line_number}</span>
-                        <span class="trace-meta">Line last changed: {match_last}</span>
-                    </div>
-                    <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.6rem">
-                        {match_author}
-                    </span>
-                </div>
-                """
-
-        html += """
+        <div class="card">
+            <h2 style="margin-top:0">Project Summary</h2>
+            <p>Overall implementation progress: <b>{self._calculate_global_percent()}%</b></p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {self._calculate_global_percent()}%"></div>
             </div>
         </div>
         """
+        html = self._get_layout("Dashboard", content)
+        (self.output_dir / "index.html").write_text(html)
 
-    html += """
-    </div>
-</body>
-</html>
-    """
-    return html
+    def _calculate_global_percent(self) -> int:
+        if not self.report.total_requirements:
+            return 0
+        total = sum(c.total_percentage for c in self.report.coverage_details.values())
+        return int(total / self.report.total_requirements)
+
+    def _write_requirements_list(self):
+        """Writes the list of all requirements."""
+        rows = ""
+        sorted_ids = sorted(self.index.requirements.keys())
+        for rid in sorted_ids:
+            req = self.index.requirements[rid]
+            cov = self.report.coverage_details[rid]
+            status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
+            status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
+
+            rows += f"""
+            <tr>
+                <td><a href="{rid}.html" class="link">{rid}</a></td>
+                <td>{req.title}</td>
+                <td><span class="badge {status_class}">{status_text}</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: {cov.total_percentage}%"></div>
+                    </div>
+                    <span style="font-size:0.75rem">{cov.total_percentage}%</span>
+                </td>
+            </tr>
+            """
+
+        content = f"""
+        <h1>Requirements List</h1>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+        </div>
+        """
+        html = self._get_layout("Requirements", content, depth=1)
+        (self.output_dir / "requirements" / "index.html").write_text(html)
+
+    def _write_requirement_details(self):
+        """Writes detail page for each requirement."""
+        for rid, req in self.index.requirements.items():
+            cov = self.report.coverage_details[rid]
+
+            # History items
+            created_at = _format_date(req.created.timestamp if req.created else None)
+            last_changed = _format_date(req.last_changed.timestamp if req.last_changed else None)
+
+            traces = ""
+            for m in cov.matches:
+                m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
+                traces += f"""
+                <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                        <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
+                    </div>
+                    <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
+                </div>
+                """
+
+            if not traces:
+                traces = "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No implementation traces found.</div>"
+
+            content = f"""
+            <a href="index.html" class="link" style="font-size:0.9rem">← Back to List</a>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem">
+                <h1 style="text-align:left">{rid}</h1>
+                <span class="badge {'badge-success' if cov.is_implemented else 'badge-warning'}">{cov.total_percentage}%</span>
+            </div>
+            <h2 style="color:var(--text-primary); margin-top:0.25rem">{req.title}</h2>
+            <p style="color:var(--text-secondary)">{req.description}</p>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top:2rem">
+                <div class="card">
+                    <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">History</h3>
+                    <div style="font-size:0.9rem">
+                        <div style="margin-bottom:1rem">
+                            <div style="color:var(--text-secondary); font-size:0.75rem">First Defined</div>
+                            <div>{created_at} by <b>{req.created.author if req.created else "N/A"}</b></div>
+                        </div>
+                        <div>
+                            <div style="color:var(--text-secondary); font-size:0.75rem">Last Modified</div>
+                            <div>{last_changed} by <b>{req.last_changed.author if req.last_changed else "N/A"}</b></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Hierarchy</h3>
+                    <div style="font-size:0.9rem">
+                        <div style="color:var(--text-secondary); font-size:0.75rem">Derived From</div>
+                        <div>{' , '.join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:2rem">
+                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Implementation Traces</h3>
+                {traces}
+            </div>
+            """
+            html = self._get_layout(f"Detail {rid}", content, depth=1)
+            (self.output_dir / "requirements" / f"{rid}.html").write_text(html)
+
+    def _write_timeline(self):
+        """Writes a simple chronological timeline of requirement/trace events."""
+        events = []
+        for rid, req in self.index.requirements.items():
+            if req.created:
+                events.append({"time": req.created.timestamp, "label": "Requirement Created", "id": rid, "author": req.created.author})
+
+            cov = self.report.coverage_details[rid]
+            # First implementation timestamp
+            impl_dates = [m.first_implemented.timestamp for m in cov.matches if m.first_implemented]
+            if impl_dates:
+                events.append(
+                    {
+                        "time": min(impl_dates),
+                        "label": "Implementation Started",
+                        "id": rid,
+                        "author": "System",  # Or find specific author
+                    }
+                )
+
+        events.sort(key=lambda x: x["time"], reverse=True)
+
+        timeline_items = ""
+        for e in events:
+            timeline_items += f"""
+            <div style="padding: 1.5rem; border-left: 2px solid var(--accent-blue); margin-left: 1rem; position: relative;">
+                <div style="position: absolute; width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; left: -7px; top: 1.8rem"></div>
+                <div style="color:var(--text-secondary); font-size:0.75rem">{_format_date(e['time'])}</div>
+                <div style="font-weight:800; color:var(--accent-blue)">{e['label']}</div>
+                <div style="font-size:1.1rem; font-weight:600"><a href="requirements/{e['id']}.html" class="link">{e['id']}</a></div>
+                <div style="font-size:0.85rem; color:var(--text-secondary)">By {e['author']}</div>
+            </div>
+            """
+
+        content = f"""
+        <h1>Project Timeline</h1>
+        <div class="card">
+            {timeline_items}
+        </div>
+        """
+        html = self._get_layout("Timeline", content)
+        (self.output_dir / "timeline.html").write_text(html)
+
+
+def generate_html_directory(index: RequirementIndex, report: CoverageReport, output_dir: Path):
+    """Entry point for generating the multi-page report."""
+    generator = MultiPageGenerator(index, report, output_dir)
+    generator.generate()
+
+
+# Keep original function for backward compatibility if needed,
+# but point it to a single-file generator if strictly necessary.
+# For now, let's just use the directory one.
+def generate_html(index: RequirementIndex, report: CoverageReport) -> str:
+    """Original signature, returns a single-page HTML string (legacy)."""
+    # pylint: disable=unused-argument
+    return "Please use generate_html_directory instead."

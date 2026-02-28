@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Reqtrace</title>
+    <link rel="stylesheet" href="./assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="nav-logo">Reqtrace</a>
+            <div class="nav-links">
+                <a href="./index.html">Dashboard</a>
+                <a href="./requirements/index.html">Requirements</a>
+                <a href="./timeline.html">Timeline</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+
+        <header>
+            <h1>Report Dashboard</h1>
+            <div class="subtitle">Traceability Matrix Governance Overview</div>
+            <div style="font-size: 0.85rem; margin-top: 1rem; color: var(--text-secondary)">
+                Generated: 2026-02-28 17:22
+            </div>
+        </header>
+
+        <div class="summary-grid">
+            <div class="stat-card" style="border-top: 3px solid var(--accent-blue)">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Requirements</span>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-green)">
+                <span class="stat-value" style="color: var(--accent-green)">6</span>
+                <span class="stat-label">Full Coverage</span>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-yellow)">
+                <span class="stat-value" style="color: var(--accent-yellow)">1</span>
+                <span class="stat-label">Partial Coverage</span>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid var(--accent-red)">
+                <span class="stat-value" style="color: var(--accent-red)">1</span>
+                <span class="stat-label">Missing</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-top:0">Project Summary</h2>
+            <p>Overall implementation progress: <b>81%</b></p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 81%"></div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
