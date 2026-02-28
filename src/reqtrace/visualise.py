@@ -5,9 +5,11 @@ import datetime
 import logging
 from pathlib import Path
 from typing import Optional
-from .models import RequirementIndex
+
 from .coverage import CoverageReport
-from .git import get_line_metadata, get_line_first_commit, get_range_commits
+from .git import get_line_first_commit, get_line_metadata, get_range_commits
+from .models import RequirementIndex
+from .source_tree import build_source_tree, render_source_tree_node, rollup_source_tree
 
 log = logging.getLogger(__name__)
 
@@ -297,6 +299,7 @@ class MultiPageGenerator:
         """Generates the entire report structure."""
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "requirements").mkdir(exist_ok=True)
+        (self.output_dir / "source").mkdir(exist_ok=True)
         (self.output_dir / "assets").mkdir(exist_ok=True)
 
         # Write assets
@@ -306,6 +309,7 @@ class MultiPageGenerator:
         self._write_index()
         self._write_requirements_list()
         self._write_requirement_details()
+        self._write_source_list()
 
     def _get_layout(self, title: str, content: str, depth: int = 0) -> str:
         """Shared HTML layout with navigation."""
@@ -327,6 +331,7 @@ class MultiPageGenerator:
             <div class="nav-links">
                 <a href="{base}index.html">Dashboard</a>
                 <a href="{base}requirements/index.html">Requirements</a>
+                <a href="{base}source/index.html">Source Code</a>
             </div>
         </div>
     </nav>
@@ -375,6 +380,46 @@ class MultiPageGenerator:
             </div>
         </div>
         """
+        if self.report.source_stats:
+            stats = self.report.source_stats
+            percent = int((stats.mapped_lines / stats.total_lines) * 100) if stats.total_lines > 0 else 0
+            content += f"""
+        <div class="card">
+            <h2 style="margin-top:0">Source Code Traceability</h2>
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.9rem">
+                <div>
+                    <div style="color:var(--text-secondary)">Total Files</div>
+                    <div style="font-weight:600; font-size:1.1rem">{stats.total_files}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Total Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem">{stats.total_lines}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Mapped Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem; color:var(--accent-green)">{stats.mapped_lines}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Unmapped Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem; color:var(--accent-red)">{stats.unmapped_lines}</div>
+                </div>
+            </div>
+            """
+
+            if stats.disabled_files > 0:
+                content += f"""
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                <span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">{stats.disabled_files} Disabled Files</span>
+            </div>
+            """
+
+            content += f"""
+            <p>Proportion of codebase mapped to requirements: <b>{percent}%</b></p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {percent}%; background-color: {_get_progress_color(percent)}"></div>
+            </div>
+        </div>
+        """
         html = self._get_layout("Dashboard", content)
         (self.output_dir / "index.html").write_text(html)
 
@@ -384,9 +429,42 @@ class MultiPageGenerator:
         total = sum(c.total_percentage for c in self.report.coverage_details.values())
         return int(total / self.report.total_requirements)
 
+    def _render_requirement_node(self, req_id: str, depth: int, parent_id: str, children_map: dict) -> str:
+        req = self.index.requirements[req_id]
+        cov = self.report.coverage_details[req_id]
+        status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
+        status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
+
+        if len(children_map[req_id]) > 0:
+            toggle_btn = f'<button class="toggle-btn collapsed" id="btn-{req_id}" onclick="toggleRow(\'{req_id}\')">▼</button>'
+        else:
+            toggle_btn = f"<span style=\"color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center\">{'└─ ' if depth > 0 else ''}</span>"
+
+        row_html = f"""
+        <tr id="row-{req_id}"{' class="hidden-row"' if depth > 0 else ""} {f'data-parent="{parent_id}"' if parent_id else ""}>
+            <td style="padding-left: {0.75 + (depth * 2)}rem; white-space: nowrap;">
+                {toggle_btn}
+                <a href="{req_id}.html" class="link">{req_id}</a>
+            </td>
+            <td>{req.title}</td>
+            <td><span class="badge {status_class}">{status_text}</span></td>
+            <td>
+                <div class="progress-bar" style="height:4px">
+                    <div class="progress-fill" style="width: {cov.total_percentage}%; background-color: {_get_progress_color(cov.total_percentage)}"></div>
+                </div>
+                <span style="font-size:0.75rem">{cov.total_percentage}%</span>
+            </td>
+        </tr>
+        """
+
+        child_rows = ""
+        for child_id in sorted(children_map[req_id]):
+            child_rows += self._render_requirement_node(child_id, depth + 1, req_id, children_map)
+
+        return row_html + child_rows
+
     def _write_requirements_list(self):
         """Writes the list of all requirements as a tree."""
-        # pylint: disable=too-many-locals
         # 1. Build parent->children mapping and identify roots
         children_map = {req_id: [] for req_id in self.index.requirements}
         has_parent = set()
@@ -399,51 +477,8 @@ class MultiPageGenerator:
         roots = sorted([r for r in self.index.requirements if r not in has_parent])
 
         rows = ""
-
-        def render_node(req_id: str, depth: int, parent_id: str = "") -> str:
-            req = self.index.requirements[req_id]
-            cov = self.report.coverage_details[req_id]
-            status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
-            status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
-
-            padding_left = 0.75 + (depth * 2)  # Base padding + 2rem per depth level
-
-            has_children = len(children_map[req_id]) > 0
-
-            if has_children:
-                toggle_btn = f'<button class="toggle-btn collapsed" id="btn-{req_id}" onclick="toggleRow(\'{req_id}\')">▼</button>'
-            else:
-                prefix = "└─ " if depth > 0 else ""
-                toggle_btn = f"<span style=\"color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center\">{prefix}</span>"
-
-            parent_attr = f'data-parent="{parent_id}"' if parent_id else ""
-            hidden_class = ' class="hidden-row"' if depth > 0 else ""
-
-            row_html = f"""
-            <tr id="row-{req_id}"{hidden_class} {parent_attr}>
-                <td style="padding-left: {padding_left}rem; white-space: nowrap;">
-                    {toggle_btn}
-                    <a href="{req_id}.html" class="link">{req_id}</a>
-                </td>
-                <td>{req.title}</td>
-                <td><span class="badge {status_class}">{status_text}</span></td>
-                <td>
-                    <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: {cov.total_percentage}%; background-color: {_get_progress_color(cov.total_percentage)}"></div>
-                    </div>
-                    <span style="font-size:0.75rem">{cov.total_percentage}%</span>
-                </td>
-            </tr>
-            """
-
-            child_rows = ""
-            for child_id in sorted(children_map[req_id]):
-                child_rows += render_node(child_id, depth + 1, req_id)
-
-            return row_html + child_rows
-
         for root_id in roots:
-            rows += render_node(root_id, 0)
+            rows += self._render_requirement_node(root_id, 0, "", children_map)
 
         content = f"""
         <h1>Requirements List</h1>
@@ -744,6 +779,110 @@ class MultiPageGenerator:
         if not timeline_items:
             return "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No timeline events found.</div>"
         return timeline_items
+
+    def _write_source_list(self):
+        """Writes the list of all source files and their coverage as an expandable tree."""
+        if not self.report.source_stats:
+            html = self._get_layout(
+                "Source Code",
+                "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No source code stats available.</div>",
+                depth=1,
+            )
+            (self.output_dir / "source" / "index.html").write_text(html)
+            return
+
+        root = build_source_tree(self.report.source_stats.file_stats)
+        rollup_source_tree(root)
+
+        node_counter = [0]
+        rows = render_source_tree_node(root, -1, None, node_counter, _get_progress_color)
+
+        content = f"""
+        <h1>Source Code Traceability</h1>
+        <p class="subtitle">Detailed breakdown of requirement coverage mapped to source files.</p>
+        <div class="card" style="margin-top: 2rem">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%">File Path</th>
+                        <th style="width: 15%">Lines (Mapped/Total)</th>
+                        <th style="width: 10%">Coverage</th>
+                        <th style="width: 35%">Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+        </div>
+        <script>
+        function toggleDetails(nodeId, btn) {{
+            const row = document.getElementById('details-' + nodeId);
+            if (row) {{
+                row.classList.toggle('hidden-row');
+                btn.classList.toggle('collapsed');
+            }}
+        }}
+
+        function toggleFolder(nodeId, btn) {{
+            const isCollapsing = !btn.classList.contains('collapsed');
+            btn.classList.toggle('collapsed');
+            btn.innerText = isCollapsing ? '▶' : '▼';
+
+            // We need to recursively hide/show all children
+            const toggleChildren = (parentId, hide) => {{
+                const trs = document.querySelectorAll(`tr[data-parent="${{parentId}}"]`);
+                trs.forEach(tr => {{
+                    // Check if this row is a details row and shouldn't be shown
+                    if (tr.classList.contains('tree-details')) {{
+                        // Unmapped details should only be shown if its parent file is NOT collapsed
+                        // But wait! Files themselves can't be collapsed in our model, only folders.
+                        // Actually, our unmapped toggle handles details. If folder hides, details ALWAYS hide.
+                        // If folder shows, details ONLY show if the file toggle isn't collapsed.
+                        const fileNodeId = tr.id.split('-')[1];
+                        const fileToggle = document.querySelector(`#node-${{fileNodeId}} .toggle-btn`);
+                        if (hide || (fileToggle && fileToggle.classList.contains('collapsed'))) {{
+                            tr.classList.add('hidden-row');
+                        }} else {{
+                            tr.classList.remove('hidden-row');
+                        }}
+                    }} else {{
+                        if (hide) {{
+                            tr.classList.add('hidden-row');
+                        }} else {{
+                            tr.classList.remove('hidden-row');
+                        }}
+                    }}
+
+                    // If this child is a folder itself, recurse
+                    const childNodeIdStr = tr.id.replace('node-', '').replace('details-', '');
+                    const childNodeId = parseInt(childNodeIdStr);
+
+                    if (!isNaN(childNodeId) && !tr.classList.contains('tree-details')) {{
+                        const childToggle = tr.querySelector('.toggle-btn');
+                        if (childToggle && !childToggle.classList.contains('collapsed')) {{
+                             // This is an open sub-folder. We must process its kids too!
+                             // If we are hiding everything, we hide its kids unconditionally.
+                             // If we are showing, we show its kids because it's open.
+                             toggleChildren(childNodeId, hide);
+                        }} else if (childToggle && childToggle.classList.contains('collapsed')) {{
+                             // This is a closed sub-folder.
+                             // If hiding everything, recurse hide to ensure nothing slips through
+                             if (hide) {{
+                                 toggleChildren(childNodeId, hide);
+                             }}
+                             // If showing, do NOT recurse, leave it closed.
+                        }}
+                    }}
+                }});
+            }};
+
+            toggleChildren(nodeId, isCollapsing);
+        }}
+        </script>
+        """
+        html = self._get_layout("Source Code", content, depth=1)
+        (self.output_dir / "source" / "index.html").write_text(html)
 
 
 def generate_html(index: RequirementIndex, report: CoverageReport, output_dir: Path):

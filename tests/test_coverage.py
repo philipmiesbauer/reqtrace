@@ -28,13 +28,54 @@ def test_coverage_calculation():
         TraceMatch(file_path="typo.py", line_start=1, line_end=3, req_id="REQ-TYYPO"),
     ]
 
-    report = calculate_coverage(index, traces)
+    file_lines = {
+        "foo.py": (10, False),
+        "bar.py": (15, False),
+        "baz.py": (5, False),
+        "typo.py": (10, False),
+        "unmapped.py": (20, False),
+        "disabled_file.py": (50, True),
+    }
+
+    report = calculate_coverage(index, traces, file_lines)
 
     # Verify overall metrics
     assert report.total_requirements == 4
     assert report.implemented_requirements == 2  # 100 and OVER
     assert report.partial_requirements == 1  # PARTIAL
     assert report.missing_requirements == 1  # MISSING
+
+    # Verify SourceStats
+    assert report.source_stats is not None
+    assert report.source_stats.total_files == 6
+    assert report.source_stats.disabled_files == 1
+    assert report.source_stats.total_lines == 60  # EXCLUDES the 50 lines from disabled
+    # foo.py mapped: 1-4, 5-9 -> 9 lines. bar.py mapped: 10-15 -> 6 lines. baz.py mapped: 1, 2-4 -> 4 lines. typo.py -> 3 lines
+    assert report.source_stats.mapped_lines == 22
+    assert report.source_stats.unmapped_lines == 38
+
+    # Verify FileStats details
+    assert len(report.source_stats.file_stats) == 6
+    foo_stat = next(fs for fs in report.source_stats.file_stats if fs.file_path == "foo.py")
+    assert foo_stat.mapped_lines == 9
+    assert foo_stat.unmapped_ranges == [(10, 10)]
+
+    baz_stat = next(fs for fs in report.source_stats.file_stats if fs.file_path == "baz.py")
+    assert baz_stat.mapped_lines == 4
+    assert baz_stat.unmapped_ranges == [(5, 5)]
+
+    typo_stat = next(fs for fs in report.source_stats.file_stats if fs.file_path == "typo.py")
+    assert typo_stat.mapped_lines == 3
+    assert typo_stat.unmapped_ranges == [(4, 10)]
+
+    unmapped_stat = next(fs for fs in report.source_stats.file_stats if fs.file_path == "unmapped.py")
+    assert unmapped_stat.mapped_lines == 0
+    assert unmapped_stat.unmapped_ranges == [(1, 20)]
+
+    disabled_stat = next(fs for fs in report.source_stats.file_stats if fs.file_path == "disabled_file.py")
+    assert disabled_stat.mapped_lines == 0
+    assert disabled_stat.unmapped_ranges == []
+    assert disabled_stat.is_disabled
 
     # Verify specific traces matched
     assert report.coverage_details["REQ-100"].is_implemented is True

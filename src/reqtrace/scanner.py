@@ -4,7 +4,7 @@ Scanner for finding trace tags in source code files.
 import re
 import os
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Tuple, Dict
 import pathspec
 
 from .models import TraceMatch
@@ -14,19 +14,30 @@ from .models import TraceMatch
 START_TAG_PATTERN = re.compile(r"@trace-start:\s*([A-Za-z0-9_-]+)(?:\s*\(\s*(\d+)\s*%\s*\))?")
 # Matches e.g. "@ trace-end: REQUIRE-123"
 END_TAG_PATTERN = re.compile(r"@trace-end:\s*([A-Za-z0-9_-]+)")
+# Matches "@ trace: disable" anywhere to completely ignore a file's code line statistics
+DISABLE_TAG_PATTERN = re.compile(r"@trace:\s*disable")
 
 
-def scan_file(filepath: Union[str, Path]) -> List[TraceMatch]:
-    """Scans a single text file for requirement trace tags."""
+def scan_file(filepath: Union[str, Path]) -> Tuple[List[TraceMatch], int, bool]:
+    """Scans a single text file for requirement trace tags. Returns traces and total line count."""
     # @trace-start: REQ-SCAN-FILE
     # @trace-start: REQ-SCAN-REGEX
     path = Path(filepath)
     matches = []
     open_traces = {}
+    total_lines = 0
+    is_disabled = False
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             for line_no, line in enumerate(f, start=1):
+                total_lines = line_no
+
+                if not is_disabled and DISABLE_TAG_PATTERN.search(line):
+                    is_disabled = True
+                    # Even if disabled, we continue parsing to find total line count,
+                    # but we won't return any trace matches found inside this file.
+
                 for match in START_TAG_PATTERN.finditer(line):
                     req_id = match.group(1)
                     pct_str = match.group(2)
@@ -52,7 +63,9 @@ def scan_file(filepath: Union[str, Path]) -> List[TraceMatch]:
 
     # @trace-end: REQ-SCAN-REGEX
     # @trace-end: REQ-SCAN-FILE
-    return matches
+    if is_disabled:
+        return [], total_lines, True
+    return matches, total_lines, False
 
 
 def _get_ignore_spec(directory: Path) -> pathspec.PathSpec:
@@ -88,8 +101,8 @@ def _get_ignore_spec(directory: Path) -> pathspec.PathSpec:
     return pathspec.PathSpec.from_lines("gitignore", patterns)
 
 
-def scan_directory(directory: Union[str, Path]) -> List[TraceMatch]:
-    """Recursively scans a directory for trace tags, respecting .gitignore."""
+def scan_directory(directory: Union[str, Path]) -> Tuple[List[TraceMatch], Dict[str, Tuple[int, bool]]]:
+    """Recursively scans a directory for trace tags, respecting .gitignore. Returns traces and file (line counts, is_disabled)."""
     # @trace-start: REQ-SCAN-DIR
     dir_path = Path(directory)
     if not dir_path.is_dir():
@@ -97,6 +110,7 @@ def scan_directory(directory: Union[str, Path]) -> List[TraceMatch]:
 
     spec = _get_ignore_spec(dir_path)
     all_matches = []
+    file_lines: Dict[str, Tuple[int, bool]] = {}
 
     for root, dirs, files in os.walk(dir_path):
         root_path = Path(root)
@@ -106,10 +120,16 @@ def scan_directory(directory: Union[str, Path]) -> List[TraceMatch]:
         dirs[:] = [d for d in dirs if not spec.match_file(str((root_path / d).relative_to(dir_path)) + "/")]
 
         for file in files:
+            # Skip .gitignore files themselves from being counted as source code
+            if file == ".gitignore":
+                continue
+
             file_rel_path = str((root_path / file).relative_to(dir_path))
             if not spec.match_file(file_rel_path):
                 filepath = root_path / file
-                all_matches.extend(scan_file(filepath))
+                matches, lines, is_disabled = scan_file(filepath)
+                all_matches.extend(matches)
+                file_lines[str(filepath)] = (lines, is_disabled)
 
     # @trace-end: REQ-SCAN-DIR
-    return all_matches
+    return all_matches, file_lines

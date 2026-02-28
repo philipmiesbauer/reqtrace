@@ -2,7 +2,7 @@
 Data models for reqtrace requirements and traces.
 """
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from .git import GitMetadata
 
 
@@ -55,6 +55,29 @@ class TraceMatch:
             and self.percentage == other.percentage
             and self.hash == other.hash
         )
+
+
+@dataclass
+class FileStats:
+    """Statistics for a single source file."""
+
+    file_path: str
+    total_lines: int
+    mapped_lines: int
+    unmapped_ranges: List[Tuple[int, int]]
+    is_disabled: bool = False
+
+
+@dataclass
+class SourceStats:
+    """Statistics about the scanned source code."""
+
+    total_files: int
+    total_lines: int
+    mapped_lines: int
+    unmapped_lines: int
+    disabled_files: int = 0
+    file_stats: List[FileStats] = field(default_factory=list)
 
 
 class RequirementIndex:
