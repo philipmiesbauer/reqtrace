@@ -25,6 +25,7 @@ def load_yaml(filepath: Union[str, Path]) -> List[Dict[str, Any]]:
 
 def parse_requirements(data: List[Dict[str, Any]]) -> RequirementIndex:
     """Parses a list of dictionaries into a validated RequirementIndex."""
+    # @trace: REQ-PARSE
     index = RequirementIndex()
 
     for item in data:
