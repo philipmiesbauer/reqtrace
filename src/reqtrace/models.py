@@ -1,30 +1,44 @@
+"""
+Data models for reqtrace requirements and traces.
+"""
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
+
 @dataclass
 class Requirement:
+    """A defined project requirement."""
+
     id: str
     title: str
     description: str = ""
     derived_from: List[str] = field(default_factory=list)
 
+
 @dataclass
 class TraceMatch:
+    """A trace tag found within the source code."""
+
     file_path: str
     line_number: int
     req_id: str
     percentage: Optional[int] = None
 
+
 class RequirementIndex:
+    """An index of all loaded requirements."""
+
     def __init__(self):
         self.requirements: Dict[str, Requirement] = {}
 
     def add(self, req: Requirement):
+        """Adds a requirement to the index."""
         if req.id in self.requirements:
             raise ValueError(f"Requirement with id '{req.id}' already exists.")
         self.requirements[req.id] = req
 
     def get(self, req_id: str) -> Optional[Requirement]:
+        """Gets a requirement by its ID."""
         return self.requirements.get(req_id)
 
     def validate_graph(self):
