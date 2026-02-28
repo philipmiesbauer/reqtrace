@@ -8,6 +8,13 @@ class Requirement:
     description: str = ""
     derived_from: List[str] = field(default_factory=list)
 
+@dataclass
+class TraceMatch:
+    file_path: str
+    line_number: int
+    req_id: str
+    percentage: Optional[int] = None
+
 class RequirementIndex:
     def __init__(self):
         self.requirements: Dict[str, Requirement] = {}

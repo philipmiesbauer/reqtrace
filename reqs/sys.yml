@@ -1,0 +1,11 @@
+- id: SYS-REQ
+  title: Requirements Tracking
+  description: The system shall provide a means to trace requirements from definition to implementation and verification.
+
+- id: SYS-SCAN
+  title: Code Scanning
+  description: The system shall scan source code to find requirement traceability links.
+
+- id: SYS-CI
+  title: Continuous Integration
+  description: The system shall be operable within automated CI environments.
