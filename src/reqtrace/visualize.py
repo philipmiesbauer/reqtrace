@@ -636,17 +636,36 @@ class MultiPageGenerator:
     def _build_individual_timeline(self, req, cov) -> str:
         events = []
         if req.created:
-            events.append({"time": req.created.timestamp, "label": "Requirement Created", "author": req.created.author})
-        if req.last_changed and req.created and req.last_changed.timestamp > req.created.timestamp:
-            events.append({"time": req.last_changed.timestamp, "label": "Requirement Modified", "author": req.last_changed.author})
-
-        impl_dates = [m.first_implemented.timestamp for m in cov.matches if m.first_implemented]
-        if impl_dates:
             events.append(
                 {
-                    "time": min(impl_dates),
+                    "time": req.created.timestamp,
+                    "label": "Requirement Created",
+                    "author": req.created.author,
+                    "commit_hash": req.created.commit_hash,
+                    "commit_subject": req.created.commit_subject,
+                }
+            )
+        if req.last_changed and req.created and req.last_changed.timestamp > req.created.timestamp:
+            events.append(
+                {
+                    "time": req.last_changed.timestamp,
+                    "label": "Requirement Modified",
+                    "author": req.last_changed.author,
+                    "commit_hash": req.last_changed.commit_hash,
+                    "commit_subject": req.last_changed.commit_subject,
+                }
+            )
+
+        valid_matches = [m for m in cov.matches if m.first_implemented]
+        if valid_matches:
+            first_match = min(valid_matches, key=lambda m: m.first_implemented.timestamp)
+            events.append(
+                {
+                    "time": first_match.first_implemented.timestamp,
                     "label": "Implementation Started",
-                    "author": "System",
+                    "author": first_match.first_implemented.author,
+                    "commit_hash": first_match.first_implemented.commit_hash,
+                    "commit_subject": first_match.first_implemented.commit_subject,
                 }
             )
 
@@ -654,12 +673,23 @@ class MultiPageGenerator:
 
         timeline_items = ""
         for e in events:
+            commit_html = ""
+            if e.get("commit_hash"):
+                short_hash = e["commit_hash"][:7]
+                subject = e.get("commit_subject", "")
+                commit_html = f"""
+                <div style="margin-top:0.5rem; background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:0.5rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-secondary)">
+                    <span style="color:var(--accent-yellow)">{short_hash}</span> {subject}
+                </div>
+                """
+
             timeline_items += f"""
             <div style="padding: 1.5rem; border-left: 2px solid var(--accent-blue); margin-left: 1rem; position: relative;">
                 <div style="position: absolute; width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; left: -7px; top: 1.8rem"></div>
                 <div style="color:var(--text-secondary); font-size:0.75rem">{_format_date(e['time'])}</div>
                 <div style="font-weight:800; color:var(--accent-blue)">{e['label']}</div>
                 <div style="font-size:0.85rem; color:var(--text-secondary)">By {e['author']}</div>
+                {commit_html}
             </div>
             """
         if not timeline_items:
