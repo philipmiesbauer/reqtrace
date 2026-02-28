@@ -23,6 +23,21 @@ class TraceMatch:
     line_number: int
     req_id: str
     percentage: Optional[int] = None
+    hash: Optional[str] = None
+
+    def __hash__(self):
+        return hash((self.file_path, self.line_number, self.req_id, self.percentage, self.hash))
+
+    def __eq__(self, other):
+        if not isinstance(other, TraceMatch):
+            return False
+        return (
+            self.file_path == other.file_path
+            and self.line_number == other.line_number
+            and self.req_id == other.req_id
+            and self.percentage == other.percentage
+            and self.hash == other.hash
+        )
 
 
 class RequirementIndex:
