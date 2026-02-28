@@ -10,26 +10,28 @@
       
       
       
-        <link rel="canonical" href="https://philipmiesbauer.github.io/reqtrace/">
+        <link rel="canonical" href="https://philipmiesbauer.github.io/reqtrace/api/coverage/">
       
       
+        <link rel="prev" href="../cli/">
       
-        <link rel="next" href="api/cli/">
+      
+        <link rel="next" href="../models/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>reqtrace</title>
+        <title>Coverage - reqtrace</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -48,9 +50,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -68,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#welcome-to-reqtrace-documentation" class="md-skip">
+        <a href="#coverage-api-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -82,7 +84,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="reqtrace" class="md-header__button md-logo" aria-label="reqtrace" data-md-component="logo">
+    <a href="../.." title="reqtrace" class="md-header__button md-logo" aria-label="reqtrace" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -102,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Coverage
             
           </span>
         </div>
@@ -187,11 +189,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -208,11 +208,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="api/cli/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../cli/" class="md-tabs__link">
           
   
   
@@ -248,7 +250,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="reqtrace" class="md-nav__button md-logo" aria-label="reqtrace" data-md-component="logo">
+    <a href="../.." title="reqtrace" class="md-nav__button md-logo" aria-label="reqtrace" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -275,6 +277,128 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -294,7 +418,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Coverage
   
 
     
@@ -305,14 +429,14 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="." class="md-nav__link md-nav__link--active">
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Home
+    Coverage
   
 
     
@@ -338,49 +462,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-concepts" class="md-nav__link">
+  <a href="#reqtrace.coverage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Concepts
+        coverage
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Core Concepts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#requirements-the-what" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Requirements (The What)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#traceability-tags-the-how" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Traceability Tags (The How)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-a-scan" class="md-nav__link">
+  <a href="#reqtrace.coverage.CoverageReport" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running a Scan
+        CoverageReport
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reqtrace.coverage.RequirementCoverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RequirementCoverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reqtrace.coverage.calculate_coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calculate_coverage
       
     </span>
   </a>
@@ -394,95 +512,6 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    API Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="api/cli/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
               
             
               
@@ -492,35 +521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/coverage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Coverage
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="api/models/" class="md-nav__link">
+      <a href="../models/" class="md-nav__link">
         
   
   
@@ -548,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/parser/" class="md-nav__link">
+      <a href="../parser/" class="md-nav__link">
         
   
   
@@ -576,7 +577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/scanner/" class="md-nav__link">
+      <a href="../scanner/" class="md-nav__link">
         
   
   
@@ -631,49 +632,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-concepts" class="md-nav__link">
+  <a href="#reqtrace.coverage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Concepts
+        coverage
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Core Concepts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#requirements-the-what" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Requirements (The What)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#traceability-tags-the-how" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Traceability Tags (The How)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-a-scan" class="md-nav__link">
+  <a href="#reqtrace.coverage.CoverageReport" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running a Scan
+        CoverageReport
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reqtrace.coverage.RequirementCoverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RequirementCoverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reqtrace.coverage.calculate_coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calculate_coverage
       
     </span>
   </a>
@@ -700,27 +695,218 @@
   
 
 
-<h1 id="welcome-to-reqtrace-documentation">Welcome to reqtrace Documentation</h1>
-<p><code>reqtrace</code> is a GitOps-friendly requirements tracing tool designed for modern CI/CD pipelines.</p>
-<p>It allows you to map system requirements strictly to source code implementation logic via comment tags (e.g., <code>@trace: REQ-001 (50%)</code>) and prove that the requirements are both implemented and tested.</p>
-<h2 id="core-concepts">Core Concepts</h2>
-<h3 id="requirements-the-what">Requirements (The What)</h3>
-<p>Requirements are written in <code>yaml</code> files. E.g.</p>
-<pre><code class="language-yaml">- id: REQ-001
-  title: Authentication
-  description: The system shall authenticate users.
-</code></pre>
-<h3 id="traceability-tags-the-how">Traceability Tags (The How)</h3>
-<p>Inside your source code (Python, Go, TS, etc.), you leave comment tags to tell the scanner what requirement a specific function implements.</p>
-<pre><code class="language-python">def login_user():
-    # @trace: REQ-001
-    pass
-</code></pre>
-<h2 id="running-a-scan">Running a Scan</h2>
-<p>Run the CLI tool pointing to your requirements definition files and your source code directory:</p>
-<pre><code class="language-bash">reqtrace --reqs reqs/*.yml --src src/
-</code></pre>
-<p>The tool will calculate a matrix and fail your CI pipeline if any coverage is missed!</p>
+<h1 id="coverage-api-reference">Coverage API Reference</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="reqtrace.coverage"></a>
+    <div class="doc doc-contents first">
+
+        <p>Logic for calculating the requirement coverage matrix.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="reqtrace.coverage.CoverageReport" class="doc doc-heading">
+            <code>CoverageReport</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>The final calculated matrix report for the entire run.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>reqtrace/coverage.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoverageReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The final calculated matrix report for the entire run.&quot;&quot;&quot;</span>
+
+    <span class="n">total_requirements</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">implemented_requirements</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">partial_requirements</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">missing_requirements</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">coverage_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RequirementCoverage</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">unmatched_traces</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TraceMatch</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="reqtrace.coverage.RequirementCoverage" class="doc doc-heading">
+            <code>RequirementCoverage</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Holds calculated implementation details for a single requirement.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>reqtrace/coverage.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RequirementCoverage</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Holds calculated implementation details for a single requirement.&quot;&quot;&quot;</span>
+
+    <span class="n">req_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">is_implemented</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">total_percentage</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TraceMatch</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.coverage.calculate_coverage" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">calculate_coverage</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">traces</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/coverage.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_coverage</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">RequirementIndex</span><span class="p">,</span> <span class="n">traces</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TraceMatch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CoverageReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix.&quot;&quot;&quot;</span>
+    <span class="n">details</span><span class="p">,</span> <span class="n">unmatched</span> <span class="o">=</span> <span class="n">_apply_direct_traces</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">traces</span><span class="p">)</span>
+    <span class="n">_calculate_rollups</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_build_report</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -770,10 +956,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.indexes", "search.suggest", "search.highlight"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

@@ -4,4 +4,24 @@
          <loc>https://philipmiesbauer.github.io/reqtrace/</loc>
          <lastmod>2026-02-28</lastmod>
     </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/cli/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/coverage/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/models/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/parser/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/scanner/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
 </urlset>
