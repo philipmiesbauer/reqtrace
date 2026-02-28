@@ -4,7 +4,7 @@ site_url: https://philipmiesbauer.github.io/reqtrace/
 repo_url: https://github.com/philipmiesbauer/reqtrace
 
 theme:
-  name: material
+  name: lux
   features:
     - navigation.tabs
     - navigation.indexes
