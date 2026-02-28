@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reqtrace"
-version = "0.1.0"
+version = "0.2.0"
 description = "A GitOps-friendly requirements tracing tool"
 readme = "README.md"
 authors = [{ name = "Philip Miesbauer" }]
@@ -13,6 +13,9 @@ dependencies = [
     "PyYAML>=6.0",
     "pathspec>=0.11"
 ]
+
+[project.scripts]
+reqtrace = "reqtrace.cli:main"
 
 [project.optional-dependencies]
 dev = [
