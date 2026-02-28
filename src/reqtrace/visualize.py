@@ -360,18 +360,35 @@ class MultiPageGenerator:
         return int(total / self.report.total_requirements)
 
     def _write_requirements_list(self):
-        """Writes the list of all requirements."""
+        """Writes the list of all requirements as a tree."""
+        # 1. Build parent->children mapping and identify roots
+        children_map = {req_id: [] for req_id in self.index.requirements}
+        has_parent = set()
+        for req in self.index.requirements.values():
+            for parent_id in req.derived_from:
+                if parent_id in children_map:
+                    children_map[parent_id].append(req.id)
+                    has_parent.add(req.id)
+
+        roots = sorted([r for r in self.index.requirements if r not in has_parent])
+
         rows = ""
-        sorted_ids = sorted(self.index.requirements.keys())
-        for rid in sorted_ids:
-            req = self.index.requirements[rid]
-            cov = self.report.coverage_details[rid]
+
+        def render_node(req_id: str, depth: int) -> str:
+            req = self.index.requirements[req_id]
+            cov = self.report.coverage_details[req_id]
             status_class = "badge-success" if cov.is_implemented else ("badge-warning" if cov.total_percentage > 0 else "badge-error")
             status_text = "Implemented" if cov.is_implemented else ("Partial" if cov.total_percentage > 0 else "Missing")
 
-            rows += f"""
+            padding_left = 0.75 + (depth * 2)  # Base padding + 2rem per depth level
+            prefix = "└─ " if depth > 0 else ""
+
+            row_html = f"""
             <tr>
-                <td><a href="{rid}.html" class="link">{rid}</a></td>
+                <td style="padding-left: {padding_left}rem">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace">{prefix}</span>
+                    <a href="{req_id}.html" class="link">{req_id}</a>
+                </td>
                 <td>{req.title}</td>
                 <td><span class="badge {status_class}">{status_text}</span></td>
                 <td>
@@ -382,6 +399,15 @@ class MultiPageGenerator:
                 </td>
             </tr>
             """
+
+            child_rows = ""
+            for child_id in sorted(children_map[req_id]):
+                child_rows += render_node(child_id, depth + 1)
+
+            return row_html + child_rows
+
+        for root_id in roots:
+            rows += render_node(root_id, 0)
 
         content = f"""
         <h1>Requirements List</h1>
