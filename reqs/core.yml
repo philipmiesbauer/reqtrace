@@ -17,3 +17,8 @@
   title: Directory Traversal
   derived_from: [SYS-SCAN]
   description: The system must recursively scan directories.
+
+- id: REQ-CLI
+  title: Command Line Interface
+  derived_from: [SYS-CI]
+  description: The system must provide a CLI to run checks.
