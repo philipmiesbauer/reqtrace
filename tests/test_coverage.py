@@ -17,15 +17,15 @@ def test_coverage_calculation():
     # Setup traces manually found in codebase
     traces = [
         # Full implicit implementation
-        TraceMatch(file_path="foo.py", line_number=1, req_id="REQ-100"),
+        TraceMatch(file_path="foo.py", line_start=1, line_end=4, req_id="REQ-100"),
         # Partial explicitly summed implementation
-        TraceMatch(file_path="foo.py", line_number=5, req_id="REQ-PARTIAL", percentage=20),
-        TraceMatch(file_path="bar.py", line_number=10, req_id="REQ-PARTIAL", percentage=30),
+        TraceMatch(file_path="foo.py", line_start=5, line_end=9, req_id="REQ-PARTIAL", percentage=20),
+        TraceMatch(file_path="bar.py", line_start=10, line_end=15, req_id="REQ-PARTIAL", percentage=30),
         # Over-allocated matches
-        TraceMatch(file_path="baz.py", line_number=1, req_id="REQ-OVER", percentage=60),
-        TraceMatch(file_path="baz.py", line_number=2, req_id="REQ-OVER", percentage=50),
+        TraceMatch(file_path="baz.py", line_start=1, line_end=1, req_id="REQ-OVER", percentage=60),
+        TraceMatch(file_path="baz.py", line_start=2, line_end=4, req_id="REQ-OVER", percentage=50),
         # Unknown/Typoed req id tags found in source code
-        TraceMatch(file_path="typo.py", line_number=1, req_id="REQ-TYYPO"),
+        TraceMatch(file_path="typo.py", line_start=1, line_end=3, req_id="REQ-TYYPO"),
     ]
 
     report = calculate_coverage(index, traces)
@@ -76,12 +76,12 @@ def test_coverage_rollup():
     index.add(Requirement(id="C5", title="Child 5", derived_from=["P4"]))
 
     traces = [
-        TraceMatch(file_path="foo.py", line_number=1, req_id="C1"),
-        TraceMatch(file_path="foo.py", line_number=2, req_id="C2", percentage=50),
-        TraceMatch(file_path="foo.py", line_number=3, req_id="C3", percentage=150),
-        TraceMatch(file_path="foo.py", line_number=4, req_id="P3", percentage=20),
-        TraceMatch(file_path="foo.py", line_number=5, req_id="C4", percentage=50),
-        TraceMatch(file_path="foo.py", line_number=6, req_id="P4", percentage=100),
+        TraceMatch(file_path="foo.py", line_start=1, line_end=1, req_id="C1"),
+        TraceMatch(file_path="foo.py", line_start=2, line_end=2, req_id="C2", percentage=50),
+        TraceMatch(file_path="foo.py", line_start=3, line_end=3, req_id="C3", percentage=150),
+        TraceMatch(file_path="foo.py", line_start=4, line_end=4, req_id="P3", percentage=20),
+        TraceMatch(file_path="foo.py", line_start=5, line_end=5, req_id="C4", percentage=50),
+        TraceMatch(file_path="foo.py", line_start=6, line_end=6, req_id="P4", percentage=100),
     ]
 
     report = calculate_coverage(index, traces)

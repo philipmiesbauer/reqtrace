@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 from .models import RequirementIndex
 from .coverage import CoverageReport
-from .git import get_line_metadata, get_line_first_commit
+from .git import get_line_metadata, get_line_first_commit, get_range_commits
 
 log = logging.getLogger(__name__)
 
@@ -250,13 +250,19 @@ def enrich_metadata(index: RequirementIndex, report: CoverageReport):
     for cov in report.coverage_details.values():
         for match in cov.matches:
             path = Path(match.file_path)
-            match.last_changed = get_line_metadata(path, match.line_number)
-            match.first_implemented = get_line_first_commit(path, match.line_number)
+            history = get_range_commits(path, match.line_start, match.line_end)
+            if history:
+                match.history = history
+                match.last_changed = max(history, key=lambda h: h.timestamp)
+                match.first_implemented = min(history, key=lambda h: h.timestamp)
 
     for match in report.unmatched_traces:
         path = Path(match.file_path)
-        match.last_changed = get_line_metadata(path, match.line_number)
-        match.first_implemented = get_line_first_commit(path, match.line_number)
+        history = get_range_commits(path, match.line_start, match.line_end)
+        if history:
+            match.history = history
+            match.last_changed = max(history, key=lambda h: h.timestamp)
+            match.first_implemented = min(history, key=lambda h: h.timestamp)
 
 
 def _format_date(timestamp: Optional[int]) -> str:
@@ -510,7 +516,7 @@ class MultiPageGenerator:
                     for match in child_cov.matches:
                         traces.append((child_id, match))
                     stack.append(child_id)
-            traces.sort(key=lambda x: (x[1].file_path, x[1].line_number))
+            traces.sort(key=lambda x: (x[1].file_path, x[1].line_start))
             descendant_traces_map[rid] = traces
 
         for rid, req in self.index.requirements.items():
@@ -586,7 +592,7 @@ class MultiPageGenerator:
             traces += f"""
             <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_start}-L{m.line_end}</code>
                     <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
                 </div>
                 <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
@@ -614,7 +620,7 @@ class MultiPageGenerator:
             child_traces_html += f"""
             <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_start}-L{m.line_end}</code>
                     <span style="margin-left:8px; font-size:0.75rem; color:var(--text-secondary)">via <a href="{child_id}.html" class="link">{child_id}</a></span>
                     <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
                 </div>
@@ -634,6 +640,7 @@ class MultiPageGenerator:
         """
 
     def _build_individual_timeline(self, req, cov) -> str:
+        # pylint: disable=too-many-locals, too-many-branches
         events = []
         if req.created:
             events.append(
@@ -656,32 +663,74 @@ class MultiPageGenerator:
                 }
             )
 
-        valid_matches = [m for m in cov.matches if m.first_implemented]
-        if valid_matches:
-            first_match = min(valid_matches, key=lambda m: m.first_implemented.timestamp)
+        all_commits = []
+        for m in cov.matches:
+            all_commits.extend(m.history)
+
+        unique_commits = {}
+        for c in all_commits:
+            if c.commit_hash and c.commit_hash not in unique_commits:
+                unique_commits[c.commit_hash] = c
+
+        sorted_commits = sorted(unique_commits.values(), key=lambda x: x.timestamp)
+
+        if sorted_commits:
+            first_commit = sorted_commits[0]
             events.append(
                 {
-                    "time": first_match.first_implemented.timestamp,
+                    "time": first_commit.timestamp,
                     "label": "Implementation Started",
-                    "author": first_match.first_implemented.author,
-                    "commit_hash": first_match.first_implemented.commit_hash,
-                    "commit_subject": first_match.first_implemented.commit_subject,
+                    "author": first_commit.author,
+                    "commit_hash": first_commit.commit_hash,
+                    "commit_subject": first_commit.commit_subject,
                 }
             )
+
+            subsequent_commits = sorted_commits[1:]
+            if subsequent_commits:
+                latest_commit = subsequent_commits[-1]
+                author_label = "Multiple" if len(set(c.author for c in subsequent_commits)) > 1 else latest_commit.author
+                events.append(
+                    {
+                        "time": latest_commit.timestamp,
+                        "label": f"Implementation Modified ({len(subsequent_commits)} changes)",
+                        "author": author_label,
+                        "is_collapse": True,
+                        "commits": sorted(subsequent_commits, key=lambda x: x.timestamp, reverse=True),
+                    }
+                )
 
         events.sort(key=lambda x: x["time"], reverse=True)
 
         timeline_items = ""
         for e in events:
-            commit_html = ""
-            if e.get("commit_hash"):
-                short_hash = e["commit_hash"][:7]
-                subject = e.get("commit_subject", "")
+            if e.get("is_collapse"):
                 commit_html = f"""
-                <div style="margin-top:0.5rem; background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:0.5rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-secondary)">
-                    <span style="color:var(--accent-yellow)">{short_hash}</span> {subject}
-                </div>
+                <details style="margin-top:0.5rem; background:rgba(0,0,0,0.2); border-radius:0.5rem; padding:0.5rem;">
+                    <summary style="cursor:pointer; color:var(--accent-yellow); font-size:0.8rem; font-weight:600;">View {len(e['commits'])} Commits</summary>
+                    <div style="margin-top:0.5rem; display:flex; flex-direction:column; gap:0.5rem;">
                 """
+                for c in e["commits"]:
+                    short_hash = c.commit_hash[:7] if c.commit_hash else ""
+                    commit_html += f"""
+                        <div style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-secondary); border-left:2px solid rgba(255,255,255,0.1); padding-left:0.5rem;">
+                            <span style="color:var(--accent-yellow)">{short_hash}</span> {c.commit_subject} <span style="opacity:0.6">- {c.author}</span>
+                        </div>
+                    """
+                commit_html += """
+                    </div>
+                </details>
+                """
+            else:
+                commit_html = ""
+                if e.get("commit_hash"):
+                    short_hash = e["commit_hash"][:7]
+                    subject = e.get("commit_subject", "")
+                    commit_html = f"""
+                    <div style="margin-top:0.5rem; background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:0.5rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-secondary)">
+                        <span style="color:var(--accent-yellow)">{short_hash}</span> {subject}
+                    </div>
+                    """
 
             timeline_items += f"""
             <div style="padding: 1.5rem; border-left: 2px solid var(--accent-blue); margin-left: 1rem; position: relative;">

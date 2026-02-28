@@ -57,7 +57,7 @@ def _load_source_code(src_path_strs: List[str]) -> List[TraceMatch]:
 
 def main(args: Optional[List[str]] = None):
     """CLI Entrypoint for reqtrace."""
-    # @trace: REQ-CLI
+    # @trace-start: REQ-CLI
     parser = argparse.ArgumentParser(description="Reqtrace: A GitOps-friendly requirements tracer.")
 
     parser.add_argument(
@@ -130,7 +130,7 @@ def main(args: Optional[List[str]] = None):
             print("The following trace tags refer to unknown requirement IDs.")
             for trace in report.unmatched_traces:
                 pct_str = f"({trace.percentage}%)" if trace.percentage else ""
-                print(f"Unknown ID: '{trace.req_id}' {pct_str} at {trace.file_path}:{trace.line_number}")
+                print(f"Unknown ID: '{trace.req_id}' {pct_str} at {trace.file_path}:{trace.line_start}-{trace.line_end}")
 
         # Exit with error code if coverage is not 100%
         # (This fails the CI pipeline intentionally if requirements aren't met!)
@@ -138,6 +138,7 @@ def main(args: Optional[List[str]] = None):
             sys.exit(1)
 
         sys.exit(0)
+        # @trace-end: REQ-CLI
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         log.error("Error running reqtrace: %s", e)

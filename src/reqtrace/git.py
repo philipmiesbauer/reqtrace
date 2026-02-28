@@ -96,3 +96,24 @@ def get_line_first_commit(filepath: Path, line_number: int) -> Optional[GitMetad
             return GitMetadata(author=parts[1], timestamp=int(parts[0]), commit_hash=lines[1], commit_subject=lines[2])
 
     return None
+
+
+def get_range_commits(filepath: Path, line_start: int, line_end: int) -> List[GitMetadata]:
+    """
+    Finds all commits that modify a specific range of lines.
+    Uses git log -L format to extract all history of the block.
+    """
+    output = _run_git(["log", f"-L{line_start},{line_end}:{filepath}", "--format=COMMIT|%at|%an|%H|%s"])
+    if not output:
+        return []
+
+    history = []
+    lines = output.strip().split("\n")
+    for line in lines:
+        if line.startswith("COMMIT|"):
+            parts = line.split("|", 4)
+            if len(parts) == 5:
+                _, timestamp_str, author, commit_hash, subject = parts
+                history.append(GitMetadata(author=author, timestamp=int(timestamp_str), commit_hash=commit_hash, commit_subject=subject))
+
+    return history

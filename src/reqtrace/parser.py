@@ -39,7 +39,7 @@ def load_yaml(filepath: Union[str, Path]) -> List[Dict[str, Any]]:
 
 def parse_requirements(data: List[Dict[str, Any]]) -> RequirementIndex:
     """Parses a list of dictionaries into a validated RequirementIndex."""
-    # @trace: REQ-PARSE
+    # @trace-start: REQ-PARSE
     index = RequirementIndex()
 
     for item in data:
@@ -63,6 +63,7 @@ def parse_requirements(data: List[Dict[str, Any]]) -> RequirementIndex:
 
     # Validate the entire graph after loading all items
     index.validate_graph()
+    # @trace-end: REQ-PARSE
     return index
 
 
