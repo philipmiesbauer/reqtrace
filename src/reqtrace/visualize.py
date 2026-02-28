@@ -493,6 +493,13 @@ class MultiPageGenerator:
 
     def _write_requirement_details(self):
         """Writes detail page for each requirement."""
+        # Pre-compute children for all requirements
+        children_map = {req_id: [] for req_id in self.index.requirements}
+        for req in self.index.requirements.values():
+            for parent_id in req.derived_from:
+                if parent_id in children_map:
+                    children_map[parent_id].append(req.id)
+
         for rid, req in self.index.requirements.items():
             cov = self.report.coverage_details[rid]
 
@@ -515,6 +522,9 @@ class MultiPageGenerator:
 
             if not traces:
                 traces = "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No implementation traces found.</div>"
+
+            parents_html = " , ".join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"
+            children_html = " , ".join([f'<a href="{c}.html" class="link">{c}</a>' for c in sorted(children_map[rid])]) or "None"
 
             content = f"""
             <a href="index.html" class="link" style="font-size:0.9rem">← Back to List</a>
@@ -542,8 +552,14 @@ class MultiPageGenerator:
                 <div class="card">
                     <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Hierarchy</h3>
                     <div style="font-size:0.9rem">
-                        <div style="color:var(--text-secondary); font-size:0.75rem">Derived From</div>
-                        <div>{' , '.join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"}</div>
+                        <div style="margin-bottom:1rem">
+                            <div style="color:var(--text-secondary); font-size:0.75rem">Derived From (Parents)</div>
+                            <div>{parents_html}</div>
+                        </div>
+                        <div>
+                            <div style="color:var(--text-secondary); font-size:0.75rem">Derived By (Children)</div>
+                            <div>{children_html}</div>
+                        </div>
                     </div>
                 </div>
             </div>
