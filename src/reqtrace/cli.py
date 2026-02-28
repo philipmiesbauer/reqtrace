@@ -5,13 +5,13 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple, Dict
 
 from .scanner import scan_directory, scan_file
 from .coverage import calculate_coverage
 from .models import TraceMatch
 from .parser import load_yaml, parse_requirements
-from .visualize import enrich_metadata, generate_html
+from .visualise import enrich_metadata, generate_html
 
 log = logging.getLogger(__name__)
 
@@ -37,22 +37,27 @@ def _load_requirements(req_path_strs: List[str]) -> List[dict]:
     return all_req_data
 
 
-def _load_source_code(src_path_strs: List[str]) -> List[TraceMatch]:
-    """Scan source files/directories and return all found trace matches."""
+def _load_source_code(src_path_strs: List[str]) -> Tuple[List[TraceMatch], Dict[str, Tuple[int, bool]]]:
+    """Scan source files/directories and return all found trace matches and file line counts."""
     all_traces: List[TraceMatch] = []
+    all_file_lines: Dict[str, Tuple[int, bool]] = {}
     for src_path_str in src_path_strs:
         src_path = Path(src_path_str)
         if src_path.is_file():
-            all_traces.extend(scan_file(src_path))
+            matches, lines, is_disabled = scan_file(src_path)
+            all_traces.extend(matches)
+            all_file_lines[str(src_path)] = (lines, is_disabled)
         elif src_path.is_dir():
-            all_traces.extend(scan_directory(src_path))
+            matches, file_lines = scan_directory(src_path)
+            all_traces.extend(matches)
+            all_file_lines.update(file_lines)
         else:
             log.warning("Source path '%s' is neither a file nor a directory.", src_path_str)
     if not all_traces:
         log.warning("No source code traces found.")
     # Make file paths unique
     all_traces = list(set(all_traces))
-    return all_traces
+    return all_traces, all_file_lines
 
 
 def main(args: Optional[List[str]] = None):
@@ -99,11 +104,11 @@ def main(args: Optional[List[str]] = None):
 
         # 2. Scan the source code
         log.info("Scanning source code at %s...", parsed_args.src)
-        all_traces = _load_source_code(parsed_args.src)
+        all_traces, file_lines = _load_source_code(parsed_args.src)
 
         # 3. Calculate Coverage
         log.info("Calculating traceability matrix...")
-        report = calculate_coverage(req_index, all_traces)
+        report = calculate_coverage(req_index, all_traces, file_lines)
 
         # 4. Generate HTML Report (if requested)
         if parsed_args.html:
@@ -119,6 +124,15 @@ def main(args: Optional[List[str]] = None):
         print(f"Implemented (>=100%):  {report.implemented_requirements}")
         print(f"Partial (<100%):  {report.partial_requirements}")
         print(f"Missing (0%):     {report.missing_requirements}\n")
+
+        if report.source_stats:
+            print("--- SOURCE CODE COVERAGE ---")
+            print(f"Total Source Files: {report.source_stats.total_files}")
+            if report.source_stats.disabled_files > 0:
+                print(f"Disabled Files:     {report.source_stats.disabled_files}")
+            print(f"Total Source Lines: {report.source_stats.total_lines}")
+            print(f"Mapped Lines:       {report.source_stats.mapped_lines}")
+            print(f"Unmapped Lines:     {report.source_stats.unmapped_lines}\n")
 
         print("--- DETAILS ---")
         for req_id, cov in report.coverage_details.items():

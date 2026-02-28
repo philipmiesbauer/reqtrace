@@ -2,8 +2,8 @@
 Logic for calculating the requirement coverage matrix.
 """
 from dataclasses import dataclass, field
-from typing import List, Dict, Tuple
-from .models import RequirementIndex, TraceMatch
+from typing import List, Dict, Tuple, Optional
+from .models import RequirementIndex, TraceMatch, SourceStats, FileStats
 
 
 @dataclass
@@ -26,6 +26,7 @@ class CoverageReport:
     missing_requirements: int
     coverage_details: Dict[str, RequirementCoverage] = field(default_factory=dict)
     unmatched_traces: List[TraceMatch] = field(default_factory=list)
+    source_stats: Optional[SourceStats] = None
 
 
 def _apply_direct_traces(index: RequirementIndex, traces: List[TraceMatch]) -> Tuple[Dict[str, RequirementCoverage], List[TraceMatch]]:
@@ -119,8 +120,79 @@ def _build_report(index: RequirementIndex, details: Dict[str, RequirementCoverag
     )
 
 
-def calculate_coverage(index: RequirementIndex, traces: List[TraceMatch]) -> CoverageReport:
+def _get_mapped_file_lines(traces: List[TraceMatch], file_lines: Dict[str, Tuple[int, bool]]) -> Dict[str, set]:
+    mapped_file_lines: Dict[str, set] = {f: set() for f in file_lines}
+    for trace in traces:
+        if trace.file_path in file_lines and not file_lines[trace.file_path][1]:
+            for line_no in range(trace.line_start, trace.line_end + 1):
+                mapped_file_lines[trace.file_path].add(line_no)
+    return mapped_file_lines
+
+
+def _get_unmapped_ranges(mapped_set: set, lines_count: int) -> List[Tuple[int, int]]:
+    unmapped = []
+    current_start = None
+    for i in range(1, lines_count + 1):
+        if i not in mapped_set:
+            if current_start is None:
+                current_start = i
+        else:
+            if current_start is not None:
+                unmapped.append((current_start, i - 1))
+                current_start = None
+    if current_start is not None:
+        unmapped.append((current_start, lines_count))
+    return unmapped
+
+
+def _calculate_source_stats(traces: List[TraceMatch], file_lines: Dict[str, Tuple[int, bool]]) -> SourceStats:
+    mapped_file_lines = _get_mapped_file_lines(traces, file_lines)
+
+    total_files = len(file_lines)
+    disabled_files = 0
+    total_lines = 0
+    mapped_lines = 0
+    file_stats: List[FileStats] = []
+
+    for filepath, (lines_count, is_disabled) in file_lines.items():
+        if is_disabled:
+            disabled_files += 1
+            file_stats.append(FileStats(file_path=filepath, total_lines=lines_count, mapped_lines=0, unmapped_ranges=[], is_disabled=True))
+            continue
+
+        total_lines += lines_count
+        f_mapped_set = mapped_file_lines[filepath]
+        f_mapped_count = len(f_mapped_set)
+        mapped_lines += f_mapped_count
+
+        unmapped = _get_unmapped_ranges(f_mapped_set, lines_count)
+
+        file_stats.append(
+            FileStats(file_path=filepath, total_lines=lines_count, mapped_lines=f_mapped_count, unmapped_ranges=unmapped, is_disabled=False)
+        )
+
+    file_stats.sort(key=lambda x: x.file_path)
+    unmapped_lines = total_lines - mapped_lines
+
+    return SourceStats(
+        total_files=total_files,
+        total_lines=total_lines,
+        mapped_lines=mapped_lines,
+        unmapped_lines=unmapped_lines,
+        disabled_files=disabled_files,
+        file_stats=file_stats,
+    )
+
+
+def calculate_coverage(
+    index: RequirementIndex, traces: List[TraceMatch], file_lines: Optional[Dict[str, Tuple[int, bool]]] = None
+) -> CoverageReport:
     """Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix."""
     details, unmatched = _apply_direct_traces(index, traces)
     _calculate_rollups(index, details)
-    return _build_report(index, details, unmatched)
+    report = _build_report(index, details, unmatched)
+
+    if file_lines is not None:
+        report.source_stats = _calculate_source_stats(traces, file_lines)
+
+    return report
