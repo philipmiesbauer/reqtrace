@@ -16,6 +16,20 @@ Unlike legacy tracing tools (like DOORS or heavy Jira setups), `reqtrace` is lan
 ## 📚 Documentation
 Read the full documentation on [GitHub Pages](https://philipmiesbauer.github.io/reqtrace/).
 
+## 🚀 Quickstart
+
+1. Clone the repository and install it:
+```bash
+git clone https://github.com/philipmiesbauer/reqtrace.git
+cd reqtrace
+pip install -e .
+```
+
+2. Run the traceability matrix on the project itself!
+```bash
+reqtrace --reqs reqs/*.yml --src src/
+```
+
 ## 🏗️ Phase 1 Development
 
 * [x] **Core Parsing Engine**: Parse `requirements.yaml` and validate the dependency graph (DAG), ensuring missing identifiers and cyclic dependencies are strictly caught.

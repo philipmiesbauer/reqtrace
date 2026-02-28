@@ -1,23 +1,34 @@
-# reqtrace
+# Welcome to reqtrace Documentation
 
-🚀 **A GitOps-friendly requirements tracing tool designed for modern CI/CD pipelines.**
+`reqtrace` is a GitOps-friendly requirements tracing tool designed for modern CI/CD pipelines.
 
-`reqtrace` allows developers to define system and business requirements in simple YAML files, map those requirements to their source code via comment tags (e.g., `@trace: REQ-001 (50%)`), and automatically verify that they are strictly implemented and tested.
+It allows you to map system requirements strictly to source code implementation logic via comment tags (e.g., `@trace: REQ-001 (50%)`) and prove that the requirements are both implemented and tested.
 
-Unlike legacy tracing tools (like DOORS or heavy Jira setups), `reqtrace` is language-agnostic, developer-friendly, and treats requirements strictly as code.
+## Core Concepts
 
-## 🌟 Key Features
+### Requirements (The What)
+Requirements are written in `yaml` files. E.g.
+```yaml
+- id: REQ-001
+  title: Authentication
+  description: The system shall authenticate users.
+```
 
-* **GitOps & Docs-as-Code**: Define your requirements in simple, version-controlled YAML.
-* **Graph Architecture (DAG)**: Map requirements strictly to their parents (using `derived_from`), ensuring complete traceability up to the top-level system requirements.
-* **Language-Agnostic Tagging**: Because it operates via smart text-based scanning, you can tag traceability in Python, Go, C++, or any text file just by writing a comment.
-* **Partial Implementations**: Split coverage across multiple microservices or modules using percentage definitions in your tags.
+### Traceability Tags (The How)
+Inside your source code (Python, Go, TS, etc.), you leave comment tags to tell the scanner what requirement a specific function implements.
 
-## 📚 Documentation
-Read the full documentation on [GitHub Pages](https://philipmiesbauer.github.io/reqtrace/).
+```python
+def login_user():
+    # @trace: REQ-001
+    pass
+```
 
-## 🏗️ Phase 1 Development
+## Running a Scan
 
-* [x] **Core Parsing Engine**: Parse `requirements.yaml` and validate the dependency graph (DAG), ensuring missing identifiers and cyclic dependencies are strictly caught.
-* [ ] **Code Implementation Scanner** *(Up Next)*: Deeply scan source code repositories to dynamically detect `@trace: REQ-001` coverage tokens.
-* [ ] **Test Verification Scanner**: Analyze test matrices to verify tracing implementation exists.
+Run the CLI tool pointing to your requirements definition files and your source code directory:
+
+```bash
+reqtrace --reqs reqs/*.yml --src src/
+```
+
+The tool will calculate a matrix and fail your CI pipeline if any coverage is missed!
