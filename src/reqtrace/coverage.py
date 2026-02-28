@@ -75,11 +75,14 @@ def _calculate_rollups(index: RequirementIndex, details: Dict[str, RequirementCo
             rollup_sum = sum(min(100, compute_total(cid)) for cid in child_ids)
             rollup = rollup_sum // len(child_ids)
 
-            # If children exist, direct implementation accounts for at most 50%,
-            # and the children account for the other 50%.
-            direct_contribution = min(100, direct_pct) // 2
-            child_contribution = rollup // 2
-            full_total = direct_contribution + child_contribution
+            if direct_pct == 0:
+                full_total = rollup
+            else:
+                # If children exist, direct implementation accounts for at most 50%,
+                # and the children account for the other 50%.
+                direct_contribution = min(100, direct_pct) // 2
+                child_contribution = rollup // 2
+                full_total = direct_contribution + child_contribution
 
         computed_totals[req_id] = full_total
         details[req_id].total_percentage = full_total

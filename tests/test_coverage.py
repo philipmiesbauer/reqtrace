@@ -88,12 +88,12 @@ def test_coverage_rollup():
 
     assert report.coverage_details["C1"].total_percentage == 100
     assert report.coverage_details["C2"].total_percentage == 50
-    # P1 has 0% direct, children are (100+50)/2 = 75%. Child contribution is 75 // 2 = 37%
-    assert report.coverage_details["P1"].total_percentage == 37
+    # P1 has 0% direct, children are (100+50)/2 = 75%. Child contribution is 75%
+    assert report.coverage_details["P1"].total_percentage == 75
 
     assert report.coverage_details["C3"].total_percentage == 150
-    # P2 has 0% direct, children are min(100, 150) = 100%. Child contribution is 100 // 2 = 50%
-    assert report.coverage_details["P2"].total_percentage == 50
+    # P2 has 0% direct, children are min(100, 150) = 100%. Child contribution is 100%
+    assert report.coverage_details["P2"].total_percentage == 100
 
     assert report.coverage_details["C4"].total_percentage == 50
     # P3 has 20% direct. Direct contribution = 10%. Children are 50%. Child contribution = 25%. Total = 35%
