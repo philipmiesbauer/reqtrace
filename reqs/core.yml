@@ -1,0 +1,24 @@
+- id: REQ-PARSE
+  title: YAML Parsing
+  derived_from: [SYS-REQ]
+  description: The system must parse requirements lists from YAML files.
+
+- id: REQ-GRAPH
+  title: Requirement Graph Validation
+  derived_from: [SYS-REQ]
+  description: The system must validate that all 'derived_from' parents exist and check for cyclic dependencies.
+
+- id: REQ-SCAN-REGEX
+  title: Regex Tag Extraction
+  derived_from: [SYS-SCAN]
+  description: The scanner must extract requirement IDs and optional coverage percentages from source code using regex.
+
+- id: REQ-SCAN-DIR
+  title: Directory Traversal
+  derived_from: [SYS-SCAN]
+  description: The system must recursively scan directories.
+
+- id: REQ-CLI
+  title: Command Line Interface
+  derived_from: [SYS-CI]
+  description: The system must provide a CLI to run checks.

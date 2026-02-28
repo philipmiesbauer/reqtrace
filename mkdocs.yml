@@ -1,0 +1,19 @@
+site_name: reqtrace
+site_description: A GitOps-friendly requirements tracing tool.
+site_url: https://philipmiesbauer.github.io/reqtrace/
+repo_url: https://github.com/philipmiesbauer/reqtrace
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+  - Home: index.md

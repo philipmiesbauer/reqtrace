@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reqtrace"
+version = "0.1.0"
+description = "A GitOps-friendly requirements tracing tool"
+readme = "README.md"
+authors = [{ name = "Philip Miesbauer" }]
+requires-python = ">=3.8"
+dependencies = [
+    "PyYAML>=6.0",
+    "pathspec>=0.11"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pre-commit>=3.5.0"
+]
+docs = [
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.20"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140
