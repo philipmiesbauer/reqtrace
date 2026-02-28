@@ -38,12 +38,12 @@
                     <a href="SYS-CI.html" class="link">SYS-CI</a>
                 </td>
                 <td>Continuous Integration</td>
-                <td><span class="badge badge-success">Implemented</span></td>
+                <td><span class="badge badge-warning">Partial</span></td>
                 <td>
                     <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                        <div class="progress-fill" style="width: 50%; background-color: hsl(60, 80%, 45%)"></div>
                     </div>
-                    <span style="font-size:0.75rem">100%</span>
+                    <span style="font-size:0.75rem">50%</span>
                 </td>
             </tr>
             
@@ -71,9 +71,9 @@
                 <td><span class="badge badge-warning">Partial</span></td>
                 <td>
                     <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: 50%; background-color: hsl(60, 80%, 45%)"></div>
+                        <div class="progress-fill" style="width: 25%; background-color: hsl(30, 80%, 45%)"></div>
                     </div>
-                    <span style="font-size:0.75rem">50%</span>
+                    <span style="font-size:0.75rem">25%</span>
                 </td>
             </tr>
             
@@ -113,27 +113,42 @@
                     <a href="SYS-SCAN.html" class="link">SYS-SCAN</a>
                 </td>
                 <td>Code Scanning</td>
-                <td><span class="badge badge-success">Implemented</span></td>
+                <td><span class="badge badge-warning">Partial</span></td>
                 <td>
                     <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                        <div class="progress-fill" style="width: 37%; background-color: hsl(44, 80%, 45%)"></div>
                     </div>
-                    <span style="font-size:0.75rem">100%</span>
+                    <span style="font-size:0.75rem">37%</span>
                 </td>
             </tr>
             
             <tr id="row-REQ-SCAN-DIR" class="hidden-row" data-parent="SYS-SCAN">
                 <td style="padding-left: 2.75rem; white-space: nowrap;">
-                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <button class="toggle-btn collapsed" id="btn-REQ-SCAN-DIR" onclick="toggleRow('REQ-SCAN-DIR')">▼</button>
                     <a href="REQ-SCAN-DIR.html" class="link">REQ-SCAN-DIR</a>
                 </td>
                 <td>Directory Traversal</td>
-                <td><span class="badge badge-success">Implemented</span></td>
+                <td><span class="badge badge-warning">Partial</span></td>
                 <td>
                     <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                        <div class="progress-fill" style="width: 50%; background-color: hsl(60, 80%, 45%)"></div>
                     </div>
-                    <span style="font-size:0.75rem">100%</span>
+                    <span style="font-size:0.75rem">50%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-SCAN-FILE" class="hidden-row" data-parent="REQ-SCAN-DIR">
+                <td style="padding-left: 4.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-SCAN-FILE.html" class="link">REQ-SCAN-FILE</a>
+                </td>
+                <td>File Traversal</td>
+                <td><span class="badge badge-error">Missing</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">0%</span>
                 </td>
             </tr>
             
