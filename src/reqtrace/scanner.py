@@ -18,6 +18,7 @@ END_TAG_PATTERN = re.compile(r"@trace-end:\s*([A-Za-z0-9_-]+)")
 
 def scan_file(filepath: Union[str, Path]) -> List[TraceMatch]:
     """Scans a single text file for requirement trace tags."""
+    # @trace-start: REQ-SCAN-FILE
     # @trace-start: REQ-SCAN-REGEX
     path = Path(filepath)
     matches = []
@@ -50,6 +51,7 @@ def scan_file(filepath: Union[str, Path]) -> List[TraceMatch]:
         pass
 
     # @trace-end: REQ-SCAN-REGEX
+    # @trace-end: REQ-SCAN-FILE
     return matches
 
 
