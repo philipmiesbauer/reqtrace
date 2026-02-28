@@ -245,6 +245,16 @@ def _format_date(timestamp: Optional[int]) -> str:
     return datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
 
 
+def _get_progress_color(percentage: float) -> str:
+    """Returns a CSS color transitioning from red (0%) to yellow (50%) to green (100%)."""
+    if percentage < 0:
+        percentage = 0
+    elif percentage > 100:
+        percentage = 100
+    hue = int((percentage / 100.0) * 120)
+    return f"hsl({hue}, 80%, 45%)"
+
+
 class MultiPageGenerator:
     """Generates a multi-page HTML report."""
 
@@ -336,7 +346,7 @@ class MultiPageGenerator:
             <h2 style="margin-top:0">Project Summary</h2>
             <p>Overall implementation progress: <b>{self._calculate_global_percent()}%</b></p>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: {self._calculate_global_percent()}%"></div>
+                <div class="progress-fill" style="width: {self._calculate_global_percent()}%; background-color: {_get_progress_color(self._calculate_global_percent())}"></div>
             </div>
         </div>
         """
@@ -366,7 +376,7 @@ class MultiPageGenerator:
                 <td><span class="badge {status_class}">{status_text}</span></td>
                 <td>
                     <div class="progress-bar" style="height:4px">
-                        <div class="progress-fill" style="width: {cov.total_percentage}%"></div>
+                        <div class="progress-fill" style="width: {cov.total_percentage}%; background-color: {_get_progress_color(cov.total_percentage)}"></div>
                     </div>
                     <span style="font-size:0.75rem">{cov.total_percentage}%</span>
                 </td>
@@ -503,7 +513,7 @@ class MultiPageGenerator:
         (self.output_dir / "timeline.html").write_text(html)
 
 
-def generate_html_directory(index: RequirementIndex, report: CoverageReport, output_dir: Path):
+def generate_html(index: RequirementIndex, report: CoverageReport, output_dir: Path):
     """Entry point for generating the multi-page report."""
     generator = MultiPageGenerator(index, report, output_dir)
     generator.generate()
