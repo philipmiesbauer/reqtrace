@@ -169,51 +169,50 @@
               <summary>Source code in <code>reqtrace/cli.py</code></summary>
               <pre class="highlight"><code class="language-python">def main(args: Optional[List[str]] = None):
     """CLI Entrypoint for reqtrace."""
-    # pylint: disable=too-many-locals
     # @trace: REQ-CLI
     parser = argparse.ArgumentParser(description="Reqtrace: A GitOps-friendly requirements tracer.")
 
-    parser.add_argument("--reqs", nargs="+", required=True, help="Path(s) to YAML requirement files.")
+    parser.add_argument(
+        "--reqs", default=["reqs/"], nargs="+", help="Path(s) to YAML requirement files or folder containing them. (Default: reqs/)"
+    )
 
     parser.add_argument(
         "--src",
+        default=["src/"],
         nargs="+",
-        required=True,
-        help="Path(s) to source code directories or files to scan.",
+        help="Path(s) to source code directories or files to scan. (Default: src/)",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose (DEBUG) logging output.",
     )
 
     parsed_args = parser.parse_args(args)
 
+    logging.basicConfig(
+        level=logging.DEBUG if parsed_args.verbose else logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
+
     try:
         # 1. Load the requirements
-        print(f"Loading requirements from {parsed_args.reqs}...")
-        all_req_data = []
-        for req_path in parsed_args.reqs:
-            all_req_data.extend(load_yaml(req_path))
-
+        log.info("Loading requirements from %s...", parsed_args.reqs)
+        all_req_data = _load_requirements(parsed_args.reqs)
         req_index = parse_requirements(all_req_data)
 
         # 2. Scan the source code
-        print(f"Scanning source code at {parsed_args.src}...")
-        all_traces = []
-        for src_path in parsed_args.src:
-            path = Path(src_path)
-            if path.is_file():
-                all_traces.extend(scan_file(path))
-            elif path.is_dir():
-                all_traces.extend(scan_directory(path))
-            else:
-                print(
-                    f"Warning: Source path {src_path} is neither file nor directory.",
-                    file=sys.stderr,
-                )
+        log.info("Scanning source code at %s...", parsed_args.src)
+        all_traces = _load_source_code(parsed_args.src)
 
         # 3. Calculate Coverage
-        sys.stdout.write("Calculating traceability matrix...\n\n")
+        log.info("Calculating traceability matrix...")
         report = calculate_coverage(req_index, all_traces)
 
-        # 4. Print Report
-        print("=== REQTRACE COVERAGE REPORT ===")
+        # 4. Print Report (plain output, not log-formatted)
+        print("\n=== REQTRACE COVERAGE REPORT ===")
         print(f"Total Requirements: {report.total_requirements}")
         print(f"Implemented (&gt;=100%):  {report.implemented_requirements}")
         print(f"Partial (&lt;100%):  {report.partial_requirements}")
@@ -239,7 +238,7 @@
         sys.exit(0)
 
     except Exception as e:  # pylint: disable=broad-exception-caught
-        print(f"Error running reqtrace: {e}", file=sys.stderr)
+        log.error("Error running reqtrace: %s", e)
         sys.exit(2)</code></pre>
             </details>
     </div>
