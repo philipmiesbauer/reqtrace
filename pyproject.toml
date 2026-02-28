@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reqtrace"
+version = "0.1.0"
+description = "A GitOps-friendly requirements tracing tool"
+readme = "README.md"
+authors = [{ name = "Philip Miesbauer" }]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
