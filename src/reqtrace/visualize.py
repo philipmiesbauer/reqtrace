@@ -382,6 +382,7 @@ class MultiPageGenerator:
 
     def _write_requirements_list(self):
         """Writes the list of all requirements as a tree."""
+        # pylint: disable=too-many-locals
         # 1. Build parent->children mapping and identify roots
         children_map = {req_id: [] for req_id in self.index.requirements}
         has_parent = set()
@@ -406,15 +407,16 @@ class MultiPageGenerator:
             has_children = len(children_map[req_id]) > 0
 
             if has_children:
-                toggle_btn = f'<button class="toggle-btn" id="btn-{req_id}" onclick="toggleRow(\'{req_id}\')">▼</button>'
+                toggle_btn = f'<button class="toggle-btn collapsed" id="btn-{req_id}" onclick="toggleRow(\'{req_id}\')">▼</button>'
             else:
                 prefix = "└─ " if depth > 0 else ""
                 toggle_btn = f"<span style=\"color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center\">{prefix}</span>"
 
             parent_attr = f'data-parent="{parent_id}"' if parent_id else ""
+            hidden_class = ' class="hidden-row"' if depth > 0 else ""
 
             row_html = f"""
-            <tr id="row-{req_id}" {parent_attr}>
+            <tr id="row-{req_id}"{hidden_class} {parent_attr}>
                 <td style="padding-left: {padding_left}rem; white-space: nowrap;">
                     {toggle_btn}
                     <a href="{req_id}.html" class="link">{req_id}</a>
