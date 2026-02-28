@@ -300,7 +300,6 @@ class MultiPageGenerator:
         self._write_index()
         self._write_requirements_list()
         self._write_requirement_details()
-        self._write_timeline()
 
     def _get_layout(self, title: str, content: str, depth: int = 0) -> str:
         """Shared HTML layout with navigation."""
@@ -322,7 +321,6 @@ class MultiPageGenerator:
             <div class="nav-links">
                 <a href="{base}index.html">Dashboard</a>
                 <a href="{base}requirements/index.html">Requirements</a>
-                <a href="{base}timeline.html">Timeline</a>
             </div>
         </div>
     </nav>
@@ -493,7 +491,6 @@ class MultiPageGenerator:
 
     def _write_requirement_details(self):
         """Writes detail page for each requirement."""
-        # pylint: disable=too-many-locals,too-many-branches
         # Pre-compute children for all requirements
         children_map = {req_id: [] for req_id in self.index.requirements}
         for req in self.index.requirements.values():
@@ -519,57 +516,6 @@ class MultiPageGenerator:
         for rid, req in self.index.requirements.items():
             cov = self.report.coverage_details[rid]
 
-            # History items
-            created_at = _format_date(req.created.timestamp if req.created else None)
-            last_changed = _format_date(req.last_changed.timestamp if req.last_changed else None)
-
-            traces = ""
-            for m in cov.matches:
-                m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
-                traces += f"""
-                <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
-                        <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
-                    </div>
-                    <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
-                </div>
-                """
-
-            if not traces:
-                traces = (
-                    "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No direct implementation traces found.</div>"
-                )
-
-            child_traces_html = ""
-            for child_id, m in descendant_traces_map[rid]:
-                m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
-                child_traces_html += f"""
-                <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
-                        <span style="margin-left:8px; font-size:0.75rem; color:var(--text-secondary)">via <a href="{child_id}.html" class="link">{child_id}</a></span>
-                        <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
-                    </div>
-                    <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
-                </div>
-                """
-
-            if not child_traces_html:
-                child_traces_html = "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No derived implementation traces found.</div>"
-
-            child_card = ""
-            if len(children_map.get(rid, [])) > 0:
-                child_card = f"""
-            <div class="card" style="margin-top:2rem">
-                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Derived Implementation Traces</h3>
-                {child_traces_html}
-            </div>
-                """
-
-            parents_html = " , ".join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"
-            children_html = " , ".join([f'<a href="{c}.html" class="link">{c}</a>' for c in sorted(children_map[rid])]) or "None"
-
             content = f"""
             <a href="index.html" class="link" style="font-size:0.9rem">← Back to List</a>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem">
@@ -580,62 +526,129 @@ class MultiPageGenerator:
             <p style="color:var(--text-secondary)">{req.description}</p>
 
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top:2rem">
-                <div class="card">
-                    <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">History</h3>
-                    <div style="font-size:0.9rem">
-                        <div style="margin-bottom:1rem">
-                            <div style="color:var(--text-secondary); font-size:0.75rem">First Defined</div>
-                            <div>{created_at} by <b>{req.created.author if req.created else "N/A"}</b></div>
-                        </div>
-                        <div>
-                            <div style="color:var(--text-secondary); font-size:0.75rem">Last Modified</div>
-                            <div>{last_changed} by <b>{req.last_changed.author if req.last_changed else "N/A"}</b></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Hierarchy</h3>
-                    <div style="font-size:0.9rem">
-                        <div style="margin-bottom:1rem">
-                            <div style="color:var(--text-secondary); font-size:0.75rem">Derived From (Parents)</div>
-                            <div>{parents_html}</div>
-                        </div>
-                        <div>
-                            <div style="color:var(--text-secondary); font-size:0.75rem">Derived By (Children)</div>
-                            <div>{children_html}</div>
-                        </div>
-                    </div>
-                </div>
+                {self._build_history_card(req)}
+                {self._build_hierarchy_card(rid, req, children_map)}
             </div>
 
+            {self._build_direct_traces_card(cov)}
+            {self._build_derived_traces_card(rid, children_map, descendant_traces_map)}
+
             <div class="card" style="margin-top:2rem">
-                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Direct Implementation Traces</h3>
-                {traces}
+                <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Timeline</h3>
+                {self._build_individual_timeline(req, cov)}
             </div>
-            {child_card}
             """
             html = self._get_layout(f"Detail {rid}", content, depth=1)
             (self.output_dir / "requirements" / f"{rid}.html").write_text(html)
 
-    def _write_timeline(self):
-        """Writes a simple chronological timeline of requirement/trace events."""
-        events = []
-        for rid, req in self.index.requirements.items():
-            if req.created:
-                events.append({"time": req.created.timestamp, "label": "Requirement Created", "id": rid, "author": req.created.author})
+    def _build_history_card(self, req) -> str:
+        created_at = _format_date(req.created.timestamp if req.created else None)
+        last_changed = _format_date(req.last_changed.timestamp if req.last_changed else None)
+        return f"""
+        <div class="card">
+            <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">History</h3>
+            <div style="font-size:0.9rem">
+                <div style="margin-bottom:1rem">
+                    <div style="color:var(--text-secondary); font-size:0.75rem">First Defined</div>
+                    <div>{created_at} by <b>{req.created.author if req.created else "N/A"}</b></div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary); font-size:0.75rem">Last Modified</div>
+                    <div>{last_changed} by <b>{req.last_changed.author if req.last_changed else "N/A"}</b></div>
+                </div>
+            </div>
+        </div>
+        """
 
-            cov = self.report.coverage_details[rid]
-            # First implementation timestamp
-            impl_dates = [m.first_implemented.timestamp for m in cov.matches if m.first_implemented]
-            if impl_dates:
-                events.append(
-                    {
-                        "time": min(impl_dates),
-                        "label": "Implementation Started",
-                        "id": rid,
-                        "author": "System",  # Or find specific author
-                    }
-                )
+    def _build_hierarchy_card(self, rid: str, req, children_map: dict) -> str:
+        parents_html = " , ".join([f'<a href="{d}.html" class="link">{d}</a>' for d in req.derived_from]) or "None"
+        children_html = " , ".join([f'<a href="{c}.html" class="link">{c}</a>' for c in sorted(children_map[rid])]) or "None"
+        return f"""
+        <div class="card">
+            <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Hierarchy</h3>
+            <div style="font-size:0.9rem">
+                <div style="margin-bottom:1rem">
+                    <div style="color:var(--text-secondary); font-size:0.75rem">Derived From (Parents)</div>
+                    <div>{parents_html}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary); font-size:0.75rem">Derived By (Children)</div>
+                    <div>{children_html}</div>
+                </div>
+            </div>
+        </div>
+        """
+
+    def _build_direct_traces_card(self, cov) -> str:
+        traces = ""
+        for m in cov.matches:
+            m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
+            traces += f"""
+            <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                    <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
+                </div>
+                <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
+            </div>
+            """
+        if not traces:
+            traces = (
+                "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No direct implementation traces found.</div>"
+            )
+
+        return f"""
+        <div class="card" style="margin-top:2rem">
+            <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Direct Implementation Traces</h3>
+            {traces}
+        </div>
+        """
+
+    def _build_derived_traces_card(self, rid: str, children_map: dict, descendant_traces_map: dict) -> str:
+        if len(children_map.get(rid, [])) == 0:
+            return ""
+
+        child_traces_html = ""
+        for child_id, m in descendant_traces_map[rid]:
+            m_date = _format_date(m.last_changed.timestamp if m.last_changed else None)
+            child_traces_html += f"""
+            <div style="padding: 0.75rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <code style="color:var(--accent-blue)">{m.file_path}:L{m.line_number}</code>
+                    <span style="margin-left:8px; font-size:0.75rem; color:var(--text-secondary)">via <a href="{child_id}.html" class="link">{child_id}</a></span>
+                    <div style="font-size:0.75rem; color:var(--text-secondary)">Last changed: {m_date}</div>
+                </div>
+                <span class="badge" style="background:rgba(255,255,255,0.05)">{m.last_changed.author if m.last_changed else "Unknown"}</span>
+            </div>
+            """
+        if not child_traces_html:
+            child_traces_html = (
+                "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No derived implementation traces found.</div>"
+            )
+
+        return f"""
+        <div class="card" style="margin-top:2rem">
+            <h3 style="margin-top:0; font-size:0.9rem; text-transform:uppercase; color:var(--text-secondary)">Derived Implementation Traces</h3>
+            {child_traces_html}
+        </div>
+        """
+
+    def _build_individual_timeline(self, req, cov) -> str:
+        events = []
+        if req.created:
+            events.append({"time": req.created.timestamp, "label": "Requirement Created", "author": req.created.author})
+        if req.last_changed and req.created and req.last_changed.timestamp > req.created.timestamp:
+            events.append({"time": req.last_changed.timestamp, "label": "Requirement Modified", "author": req.last_changed.author})
+
+        impl_dates = [m.first_implemented.timestamp for m in cov.matches if m.first_implemented]
+        if impl_dates:
+            events.append(
+                {
+                    "time": min(impl_dates),
+                    "label": "Implementation Started",
+                    "author": "System",
+                }
+            )
 
         events.sort(key=lambda x: x["time"], reverse=True)
 
@@ -646,19 +659,12 @@ class MultiPageGenerator:
                 <div style="position: absolute; width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; left: -7px; top: 1.8rem"></div>
                 <div style="color:var(--text-secondary); font-size:0.75rem">{_format_date(e['time'])}</div>
                 <div style="font-weight:800; color:var(--accent-blue)">{e['label']}</div>
-                <div style="font-size:1.1rem; font-weight:600"><a href="requirements/{e['id']}.html" class="link">{e['id']}</a></div>
                 <div style="font-size:0.85rem; color:var(--text-secondary)">By {e['author']}</div>
             </div>
             """
-
-        content = f"""
-        <h1>Project Timeline</h1>
-        <div class="card">
-            {timeline_items}
-        </div>
-        """
-        html = self._get_layout("Timeline", content)
-        (self.output_dir / "timeline.html").write_text(html)
+        if not timeline_items:
+            return "<div style='padding:2rem; text-align:center; color:var(--text-secondary)'>No timeline events found.</div>"
+        return timeline_items
 
 
 def generate_html(index: RequirementIndex, report: CoverageReport, output_dir: Path):
