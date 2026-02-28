@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reqtrace"
-version = "0.2.2"
+version = "0.3.0"
 description = "A GitOps-friendly requirements tracing tool"
 readme = "README.md"
 authors = [{ name = "Philip Miesbauer" }]
