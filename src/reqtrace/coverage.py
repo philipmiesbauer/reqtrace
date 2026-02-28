@@ -56,6 +56,7 @@ def _build_reverse_mapping(index: RequirementIndex) -> Dict[str, List[str]]:
     return children
 
 
+# @trace-start: REQ-GRAPH
 def _calculate_rollups(index: RequirementIndex, details: Dict[str, RequirementCoverage]) -> None:
     children = _build_reverse_mapping(index)
     computed_totals: Dict[str, int] = {}
@@ -86,6 +87,9 @@ def _calculate_rollups(index: RequirementIndex, details: Dict[str, RequirementCo
 
     for req_id in index.requirements:
         compute_total(req_id)
+
+
+# @trace-end: REQ-GRAPH
 
 
 def _build_report(index: RequirementIndex, details: Dict[str, RequirementCoverage], unmatched: List[TraceMatch]) -> CoverageReport:
