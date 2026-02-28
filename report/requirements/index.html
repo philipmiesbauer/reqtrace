@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements - Reqtrace</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">Reqtrace</a>
+            <div class="nav-links">
+                <a href="../index.html">Dashboard</a>
+                <a href="../requirements/index.html">Requirements</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        
+        <h1>Requirements List</h1>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr id="row-SYS-CI" >
+                <td style="padding-left: 0.75rem; white-space: nowrap;">
+                    <button class="toggle-btn collapsed" id="btn-SYS-CI" onclick="toggleRow('SYS-CI')">▼</button>
+                    <a href="SYS-CI.html" class="link">SYS-CI</a>
+                </td>
+                <td>Continuous Integration</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-CLI" class="hidden-row" data-parent="SYS-CI">
+                <td style="padding-left: 2.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-CLI.html" class="link">REQ-CLI</a>
+                </td>
+                <td>Command Line Interface</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-SYS-REQ" >
+                <td style="padding-left: 0.75rem; white-space: nowrap;">
+                    <button class="toggle-btn collapsed" id="btn-SYS-REQ" onclick="toggleRow('SYS-REQ')">▼</button>
+                    <a href="SYS-REQ.html" class="link">SYS-REQ</a>
+                </td>
+                <td>Requirements Tracking</td>
+                <td><span class="badge badge-warning">Partial</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 50%; background-color: hsl(60, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">50%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-GRAPH" class="hidden-row" data-parent="SYS-REQ">
+                <td style="padding-left: 2.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-GRAPH.html" class="link">REQ-GRAPH</a>
+                </td>
+                <td>Requirement Graph Validation</td>
+                <td><span class="badge badge-error">Missing</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">0%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-PARSE" class="hidden-row" data-parent="SYS-REQ">
+                <td style="padding-left: 2.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-PARSE.html" class="link">REQ-PARSE</a>
+                </td>
+                <td>YAML Parsing</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-SYS-SCAN" >
+                <td style="padding-left: 0.75rem; white-space: nowrap;">
+                    <button class="toggle-btn collapsed" id="btn-SYS-SCAN" onclick="toggleRow('SYS-SCAN')">▼</button>
+                    <a href="SYS-SCAN.html" class="link">SYS-SCAN</a>
+                </td>
+                <td>Code Scanning</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-SCAN-DIR" class="hidden-row" data-parent="SYS-SCAN">
+                <td style="padding-left: 2.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-SCAN-DIR.html" class="link">REQ-SCAN-DIR</a>
+                </td>
+                <td>Directory Traversal</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+            <tr id="row-REQ-SCAN-REGEX" class="hidden-row" data-parent="SYS-SCAN">
+                <td style="padding-left: 2.75rem; white-space: nowrap;">
+                    <span style="color:var(--text-secondary); margin-right:4px; font-family:'JetBrains Mono', monospace; display:inline-block; width:1.2rem; text-align:center">└─ </span>
+                    <a href="REQ-SCAN-REGEX.html" class="link">REQ-SCAN-REGEX</a>
+                </td>
+                <td>Regex Tag Extraction</td>
+                <td><span class="badge badge-success">Implemented</span></td>
+                <td>
+                    <div class="progress-bar" style="height:4px">
+                        <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+                    </div>
+                    <span style="font-size:0.75rem">100%</span>
+                </td>
+            </tr>
+            
+                </tbody>
+            </table>
+        </div>
+        <script>
+        function toggleRow(reqId) {
+            const btn = document.getElementById('btn-' + reqId);
+            if (!btn) return;
+            btn.classList.toggle('collapsed');
+
+            const tableRows = document.querySelectorAll('tr[data-parent]');
+            tableRows.forEach(row => {
+                let parent = row.getAttribute('data-parent');
+                let shouldHide = false;
+
+                while (parent) {
+                    const parentBtn = document.getElementById('btn-' + parent);
+                    if (parentBtn && parentBtn.classList.contains('collapsed')) {
+                        shouldHide = true;
+                        break;
+                    }
+                    const parentRow = document.getElementById('row-' + parent);
+                    parent = parentRow ? parentRow.getAttribute('data-parent') : null;
+                }
+
+                if (shouldHide) {
+                    row.classList.add('hidden-row');
+                } else {
+                    row.classList.remove('hidden-row');
+                }
+            });
+        }
+        </script>
+        
+    </div>
+</body>
+</html>

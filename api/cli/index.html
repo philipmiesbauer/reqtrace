@@ -190,11 +190,17 @@
         help="Enable verbose (DEBUG) logging output.",
     )
 
+    parser.add_argument(
+        "--html",
+        metavar="DIR",
+        help="Generate a structured multi-page HTML report in the specified directory.",
+    )
+
     parsed_args = parser.parse_args(args)
 
     logging.basicConfig(
         level=logging.DEBUG if parsed_args.verbose else logging.INFO,
-        format="%(levelname)s: %(message)s",
+        format="%(message)s",
     )
 
     try:
@@ -211,7 +217,15 @@
         log.info("Calculating traceability matrix...")
         report = calculate_coverage(req_index, all_traces)
 
-        # 4. Print Report (plain output, not log-formatted)
+        # 4. Generate HTML Report (if requested)
+        if parsed_args.html:
+            enrich_metadata(req_index, report)
+
+            output_dir = Path(parsed_args.html)
+            generate_html(req_index, report, output_dir)
+            log.info("Multi-page HTML report generated at: %s", output_dir.absolute())
+
+        # 5. Print Summary to Console (plain output)
         print("\n=== REQTRACE COVERAGE REPORT ===")
         print(f"Total Requirements: {report.total_requirements}")
         print(f"Implemented (&gt;=100%):  {report.implemented_requirements}")
