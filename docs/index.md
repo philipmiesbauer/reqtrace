@@ -32,3 +32,7 @@ reqtrace --reqs reqs/*.yml --src src/
 ```
 
 The tool will calculate a matrix and fail your CI pipeline if any coverage is missed!
+
+## Live Traceability Report
+You can explore the traceability data and implementation history for this project!
+👉 [**View the Interactive HTML Report**](report/index.html)
