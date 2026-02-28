@@ -8,6 +8,16 @@ import yaml
 from .models import Requirement, RequirementIndex
 
 
+# pylint: disable=too-many-ancestors
+class LineLoader(yaml.SafeLoader):
+    """Custom YAML loader that attaches line numbers to dictionaries."""
+
+    def construct_mapping(self, node, deep=False):
+        mapping = super().construct_mapping(node, deep=deep)
+        mapping["__line__"] = node.start_mark.line + 1
+        return mapping
+
+
 def load_yaml(filepath: Union[str, Path]) -> List[Dict[str, Any]]:
     """Loads a YAML file and returns a list of dictionaries."""
     path = Path(filepath)
@@ -15,10 +25,14 @@ def load_yaml(filepath: Union[str, Path]) -> List[Dict[str, Any]]:
         raise FileNotFoundError(f"File not found: {path}")
 
     with open(path, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+        data = yaml.load(f, Loader=LineLoader)
 
     if not isinstance(data, list):
         raise ValueError(f"Expected a list of requirements in '{filepath}', but got {type(data).__name__}")
+
+    for item in data:
+        if isinstance(item, dict):
+            item["__file__"] = str(path)
 
     return data
 
@@ -42,6 +56,8 @@ def parse_requirements(data: List[Dict[str, Any]]) -> RequirementIndex:
             title=item["title"],
             description=item.get("description", ""),
             derived_from=item.get("derived_from", []),
+            file_path=item.get("__file__"),
+            line_number=item.get("__line__"),
         )
         index.add(req)
 

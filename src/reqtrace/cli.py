@@ -11,6 +11,7 @@ from .scanner import scan_directory, scan_file
 from .coverage import calculate_coverage
 from .models import TraceMatch
 from .parser import load_yaml, parse_requirements
+from .visualize import enrich_metadata, generate_html
 
 log = logging.getLogger(__name__)
 
@@ -77,11 +78,17 @@ def main(args: Optional[List[str]] = None):
         help="Enable verbose (DEBUG) logging output.",
     )
 
+    parser.add_argument(
+        "--html",
+        metavar="FILE",
+        help="Generate a fancy HTML report at the specified path.",
+    )
+
     parsed_args = parser.parse_args(args)
 
     logging.basicConfig(
         level=logging.DEBUG if parsed_args.verbose else logging.INFO,
-        format="%(levelname)s: %(message)s",
+        format="%(message)s",
     )
 
     try:
@@ -98,7 +105,15 @@ def main(args: Optional[List[str]] = None):
         log.info("Calculating traceability matrix...")
         report = calculate_coverage(req_index, all_traces)
 
-        # 4. Print Report (plain output, not log-formatted)
+        # 4. Generate HTML Report (if requested)
+        if parsed_args.html:
+            enrich_metadata(req_index, report)
+            html_content = generate_html(req_index, report)
+            output_path = Path(parsed_args.html)
+            output_path.write_text(html_content, encoding="utf-8")
+            log.info("HTML report generated at: %s", output_path.absolute())
+
+        # 5. Print Summary to Console (plain output)
         print("\n=== REQTRACE COVERAGE REPORT ===")
         print(f"Total Requirements: {report.total_requirements}")
         print(f"Implemented (>=100%):  {report.implemented_requirements}")

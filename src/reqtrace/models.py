@@ -3,9 +3,11 @@ Data models for reqtrace requirements and traces.
 """
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
+from .git import GitMetadata
 
 
 @dataclass
+# pylint: disable=too-many-instance-attributes
 class Requirement:
     """A defined project requirement."""
 
@@ -13,6 +15,14 @@ class Requirement:
     title: str
     description: str = ""
     derived_from: List[str] = field(default_factory=list)
+
+    # Source location
+    file_path: Optional[str] = None
+    line_number: Optional[int] = None
+
+    # Git Metadata (optional, filled during analysis)
+    created: Optional[GitMetadata] = None
+    last_changed: Optional[GitMetadata] = None
 
 
 @dataclass
@@ -24,6 +34,10 @@ class TraceMatch:
     req_id: str
     percentage: Optional[int] = None
     hash: Optional[str] = None
+
+    # Git Metadata (optional, filled during analysis)
+    first_implemented: Optional[GitMetadata] = None
+    last_changed: Optional[GitMetadata] = None
 
     def __hash__(self):
         return hash((self.file_path, self.line_number, self.req_id, self.percentage, self.hash))
