@@ -1,3 +1,12 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark-mode.png">
+    <source media="(prefers-color-scheme: light)" srcset=".github/assets/logo-light-mode.png">
+    <img alt="reqtrace logo" src=".github/assets/logo-light-mode.png" width="600">
+  </picture>
+</p>
+
+<h1 align="center">reqtrace</h1>
 # reqtrace
 
 🚀 **A GitOps-friendly requirements tracing tool designed for modern CI/CD pipelines.**
