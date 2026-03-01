@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional
 
 import yaml
-import jsonschema  # pylint: disable=import-error
+import jsonschema
 
 from .schema import RQTR_SCHEMA
 

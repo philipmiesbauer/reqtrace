@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Union
 from xml.etree.ElementTree import Element
 
-import defusedxml.ElementTree as ET  # pylint: disable=import-error
+import defusedxml.ElementTree as ET
 import yaml
 
 # ReqIF XML namespaces (the namespace URI is the same across ReqIF 1.0 & 1.1)
