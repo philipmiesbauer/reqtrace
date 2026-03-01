@@ -9,3 +9,11 @@
 - id: SYS-CI
   title: Continuous Integration
   description: The system shall be operable within automated CI environments.
+
+- id: SYS-EXCHANGE
+  title: Requirements Interchange
+  description: The system shall support import and export of requirements using the industry-standard ReqIF format.
+
+- id: SYS-VALIDATE
+  title: Requirements Validation
+  description: The system shall provide a means to validate requirement files against a canonical schema.

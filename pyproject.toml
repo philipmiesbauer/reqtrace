@@ -4,18 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reqtrace"
-version = "0.8.0"
+version = "0.9.0"
 description = "A GitOps-friendly requirements tracing tool"
 readme = "README.md"
 authors = [{ name = "Philip Miesbauer" }]
 requires-python = ">=3.8"
 dependencies = [
     "PyYAML>=6.0",
-    "pathspec>=0.11"
+    "pathspec>=0.11",
+    "jsonschema>=4.0",
+    "defusedxml>=0.7.1"
 ]
 
 [project.scripts]
 reqtrace = "reqtrace.cli:main"
+reqtrace-exchange = "reqtrace.exchange.exchange_cli:main"
+reqtrace-validate = "reqtrace.validate.validate_cli:main"
 
 [project.optional-dependencies]
 dev = [
