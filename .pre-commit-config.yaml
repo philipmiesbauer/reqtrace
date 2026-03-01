@@ -27,7 +27,8 @@ repos:
       - id: pylint
         additional_dependencies: [pytest, PyYAML, pathspec, jsonschema, defusedxml]
         args: [
-          "--disable=redefined-outer-name,line-too-long"
+          "--disable=redefined-outer-name,line-too-long",
+          "--min-similarity-lines=10"
         ]
 
   - repo: https://github.com/koalaman/shellcheck-precommit
