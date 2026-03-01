@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Code - Reqtrace</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo">Reqtrace</a>
+            <div class="nav-links">
+                <a href="../index.html">Dashboard</a>
+                <a href="../requirements/index.html">Requirements</a>
+                <a href="../source/index.html">Source Code</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        
+        <h1>Source Code Traceability</h1>
+        <p class="subtitle">Detailed breakdown of requirement coverage mapped to source files.</p>
+        <div class="card" style="margin-top: 2rem">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%">File Path</th>
+                        <th style="width: 15%">Lines (Mapped/Total)</th>
+                        <th style="width: 10%">Coverage</th>
+                        <th style="width: 35%">Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+    <tr id="node-1" class="tree-row " >
+        <td style="white-space: nowrap; padding-left: 0.75rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(1, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 src/</span>
+        </td>
+        <td style="">345 / 2450</td>
+        <td><span class="badge badge-warning" style="">14%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 14%; background-color: hsl(16, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-2" class="tree-row child-row" data-parent="1">
+        <td style="white-space: nowrap; padding-left: 2.25rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(2, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 reqtrace/</span>
+        </td>
+        <td style="">345 / 2450</td>
+        <td><span class="badge badge-warning" style="">14%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 14%; background-color: hsl(16, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-3" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(3, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 analysis/</span>
+        </td>
+        <td style="">134 / 406</td>
+        <td><span class="badge badge-warning" style="">33%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 33%; background-color: hsl(39, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-4" class="tree-row child-row" data-parent="3">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <span style="display:inline-block; width:1.2rem; margin-right:4px"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary)">📄 __init__.py</span>
+        </td>
+        <td style="; color:var(--text-secondary)">N/A</td>
+        <td><span class="badge badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">DISABLED</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px; opacity:0.3"><div class="progress-fill" style="width: 0%; background-color: var(--text-secondary)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-5" class="tree-row child-row" data-parent="3">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(5, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 coverage.py</span>
+        </td>
+        <td style="">37 / 198</td>
+        <td><span class="badge badge-warning" style="">18%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 18%; background-color: hsl(21, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-5" class="hidden-row tree-details" data-parent="3">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L59, L97-L198
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-6" class="tree-row child-row" data-parent="3">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(6, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 parser.py</span>
+        </td>
+        <td style="">25 / 73</td>
+        <td><span class="badge badge-warning" style="">34%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 34%; background-color: hsl(40, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-6" class="hidden-row tree-details" data-parent="3">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L41, L67-L73
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-7" class="tree-row child-row" data-parent="3">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(7, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 scanner.py</span>
+        </td>
+        <td style="">72 / 135</td>
+        <td><span class="badge badge-warning" style="">53%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 53%; background-color: hsl(63, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-7" class="hidden-row tree-details" data-parent="3">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L22, L66-L105, L135
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-8" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(8, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 exchange/</span>
+        </td>
+        <td style="">86 / 451</td>
+        <td><span class="badge badge-warning" style="">19%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 19%; background-color: hsl(22, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-9" class="tree-row child-row" data-parent="8">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <span style="display:inline-block; width:1.2rem; margin-right:4px"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary)">📄 __init__.py</span>
+        </td>
+        <td style="; color:var(--text-secondary)">N/A</td>
+        <td><span class="badge badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">DISABLED</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px; opacity:0.3"><div class="progress-fill" style="width: 0%; background-color: var(--text-secondary)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-10" class="tree-row child-row" data-parent="8">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(10, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 exchange_cli.py</span>
+        </td>
+        <td style="">15 / 93</td>
+        <td><span class="badge badge-warning" style="">16%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 16%; background-color: hsl(19, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-10" class="hidden-row tree-details" data-parent="8">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L68, L84-L93
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-11" class="tree-row child-row" data-parent="8">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(11, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 reqif_exporter.py</span>
+        </td>
+        <td style="">15 / 219</td>
+        <td><span class="badge badge-warning" style="">6%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 6%; background-color: hsl(7, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-11" class="hidden-row tree-details" data-parent="8">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L204
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-12" class="tree-row child-row" data-parent="8">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(12, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 reqif_importer.py</span>
+        </td>
+        <td style="">56 / 139</td>
+        <td><span class="badge badge-warning" style="">40%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 40%; background-color: hsl(48, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-12" class="hidden-row tree-details" data-parent="8">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L68, L125-L139
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-13" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(13, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 reporting/</span>
+        </td>
+        <td style="">0 / 1053</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-14" class="tree-row child-row" data-parent="13">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <span style="display:inline-block; width:1.2rem; margin-right:4px"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary)">📄 __init__.py</span>
+        </td>
+        <td style="; color:var(--text-secondary)">N/A</td>
+        <td><span class="badge badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">DISABLED</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px; opacity:0.3"><div class="progress-fill" style="width: 0%; background-color: var(--text-secondary)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-15" class="tree-row child-row" data-parent="13">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(15, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 source_tree.py</span>
+        </td>
+        <td style="">0 / 162</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-15" class="hidden-row tree-details" data-parent="13">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L162
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-16" class="tree-row child-row" data-parent="13">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(16, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 visualise.py</span>
+        </td>
+        <td style="">0 / 891</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-16" class="hidden-row tree-details" data-parent="13">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L891
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-17" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn" style="margin-right:4px;" onclick="toggleFolder(17, this)">▼</button>
+            <span style="font-weight: 600; font-size: 0.95rem; color: var(--brand-blue)">📁 validate/</span>
+        </td>
+        <td style="">34 / 132</td>
+        <td><span class="badge badge-warning" style="">25%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 25%; background-color: hsl(30, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-18" class="tree-row child-row" data-parent="17">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <span style="display:inline-block; width:1.2rem; margin-right:4px"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary)">📄 __init__.py</span>
+        </td>
+        <td style="; color:var(--text-secondary)">N/A</td>
+        <td><span class="badge badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">DISABLED</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px; opacity:0.3"><div class="progress-fill" style="width: 0%; background-color: var(--text-secondary)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-19" class="tree-row child-row" data-parent="17">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(19, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 schema.py</span>
+        </td>
+        <td style="">0 / 39</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-19" class="hidden-row tree-details" data-parent="17">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L39
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-20" class="tree-row child-row" data-parent="17">
+        <td style="white-space: nowrap; padding-left: 5.25rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(20, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 validate_cli.py</span>
+        </td>
+        <td style="">34 / 93</td>
+        <td><span class="badge badge-warning" style="">36%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 36%; background-color: hsl(43, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-20" class="hidden-row tree-details" data-parent="17">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 6.75rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L25, L46-L74, L89-L93
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-21" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <span style="display:inline-block; width:1.2rem; margin-right:4px"></span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary)">📄 __init__.py</span>
+        </td>
+        <td style="; color:var(--text-secondary)">N/A</td>
+        <td><span class="badge badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">DISABLED</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px; opacity:0.3"><div class="progress-fill" style="width: 0%; background-color: var(--text-secondary)"></div></div>
+        </td>
+    </tr>
+    
+    <tr id="node-22" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(22, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 cli.py</span>
+        </td>
+        <td style="">91 / 163</td>
+        <td><span class="badge badge-warning" style="">55%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 55%; background-color: hsl(66, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-22" class="hidden-row tree-details" data-parent="2">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 5.25rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L64, L156-L163
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-23" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(23, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 git.py</span>
+        </td>
+        <td style="">0 / 119</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-23" class="hidden-row tree-details" data-parent="2">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 5.25rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L119
+                </div>
+            </td>
+        </tr>
+        
+    <tr id="node-24" class="tree-row child-row" data-parent="2">
+        <td style="white-space: nowrap; padding-left: 3.75rem;">
+            <button class="toggle-btn collapsed" style="margin-right:4px;" onclick="toggleDetails(24, this)">▼</button>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary)">📄 models.py</span>
+        </td>
+        <td style="">0 / 126</td>
+        <td><span class="badge badge-error" style="">0%</span></td>
+        <td>
+            <div class="progress-bar" style="height:4px"><div class="progress-fill" style="width: 0%; background-color: hsl(0, 80%, 45%)"></div></div>
+        </td>
+    </tr>
+    
+        <tr id="details-24" class="hidden-row tree-details" data-parent="2">
+            <td colspan="4" style="padding: 1rem 1rem 1rem 5.25rem; background: rgba(0,0,0,0.1)">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem">Unmapped Lines:</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-red); line-height: 1.5">
+                    L1-L126
+                </div>
+            </td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+        <script>
+        function toggleDetails(nodeId, btn) {
+            const row = document.getElementById('details-' + nodeId);
+            if (row) {
+                row.classList.toggle('hidden-row');
+                btn.classList.toggle('collapsed');
+            }
+        }
+
+        function toggleFolder(nodeId, btn) {
+            const isCollapsing = !btn.classList.contains('collapsed');
+            btn.classList.toggle('collapsed');
+            btn.innerText = isCollapsing ? '▶' : '▼';
+
+            // We need to recursively hide/show all children
+            const toggleChildren = (parentId, hide) => {
+                const trs = document.querySelectorAll(`tr[data-parent="${parentId}"]`);
+                trs.forEach(tr => {
+                    // Check if this row is a details row and shouldn't be shown
+                    if (tr.classList.contains('tree-details')) {
+                        // Unmapped details should only be shown if its parent file is NOT collapsed
+                        // But wait! Files themselves can't be collapsed in our model, only folders.
+                        // Actually, our unmapped toggle handles details. If folder hides, details ALWAYS hide.
+                        // If folder shows, details ONLY show if the file toggle isn't collapsed.
+                        const fileNodeId = tr.id.split('-')[1];
+                        const fileToggle = document.querySelector(`#node-${fileNodeId} .toggle-btn`);
+                        if (hide || (fileToggle && fileToggle.classList.contains('collapsed'))) {
+                            tr.classList.add('hidden-row');
+                        } else {
+                            tr.classList.remove('hidden-row');
+                        }
+                    } else {
+                        if (hide) {
+                            tr.classList.add('hidden-row');
+                        } else {
+                            tr.classList.remove('hidden-row');
+                        }
+                    }
+
+                    // If this child is a folder itself, recurse
+                    const childNodeIdStr = tr.id.replace('node-', '').replace('details-', '');
+                    const childNodeId = parseInt(childNodeIdStr);
+
+                    if (!isNaN(childNodeId) && !tr.classList.contains('tree-details')) {
+                        const childToggle = tr.querySelector('.toggle-btn');
+                        if (childToggle && !childToggle.classList.contains('collapsed')) {
+                             // This is an open sub-folder. We must process its kids too!
+                             // If we are hiding everything, we hide its kids unconditionally.
+                             // If we are showing, we show its kids because it's open.
+                             toggleChildren(childNodeId, hide);
+                        } else if (childToggle && childToggle.classList.contains('collapsed')) {
+                             // This is a closed sub-folder.
+                             // If hiding everything, recurse hide to ensure nothing slips through
+                             if (hide) {
+                                 toggleChildren(childNodeId, hide);
+                             }
+                             // If showing, do NOT recurse, leave it closed.
+                        }
+                    }
+                });
+            };
+
+            toggleChildren(nodeId, isCollapsing);
+        }
+        </script>
+        
+    </div>
+</body>
+</html>

@@ -14,6 +14,7 @@
             <div class="nav-links">
                 <a href="./index.html">Dashboard</a>
                 <a href="./requirements/index.html">Requirements</a>
+                <a href="./source/index.html">Source Code</a>
             </div>
         </div>
     </nav>
@@ -23,17 +24,17 @@
             <h1>Report Dashboard</h1>
             <div class="subtitle">Traceability Matrix Governance Overview</div>
             <div style="font-size: 0.85rem; margin-top: 1rem; color: var(--text-secondary)">
-                Generated: 2026-02-28 23:00
+                Generated: 2026-03-01 01:12
             </div>
         </header>
 
         <div class="summary-grid">
             <div class="stat-card" style="border-top: 3px solid var(--accent-blue)">
-                <span class="stat-value">9</span>
+                <span class="stat-value">14</span>
                 <span class="stat-label">Requirements</span>
             </div>
             <div class="stat-card" style="border-top: 3px solid var(--accent-green)">
-                <span class="stat-value" style="color: var(--accent-green)">9</span>
+                <span class="stat-value" style="color: var(--accent-green)">14</span>
                 <span class="stat-label">Full Coverage</span>
             </div>
             <div class="stat-card" style="border-top: 3px solid var(--accent-yellow)">
@@ -51,6 +52,37 @@
             <p>Overall implementation progress: <b>100%</b></p>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: 100%; background-color: hsl(120, 80%, 45%)"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="margin-top:0">Source Code Traceability</h2>
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.9rem">
+                <div>
+                    <div style="color:var(--text-secondary)">Total Files</div>
+                    <div style="font-weight:600; font-size:1.1rem">18</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Total Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem">2450</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Mapped Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem; color:var(--accent-green)">345</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-secondary)">Unmapped Lines</div>
+                    <div style="font-weight:600; font-size:1.1rem; color:var(--accent-red)">2105</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                <span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2)">5 Disabled Files</span>
+            </div>
+            
+            <p>Proportion of codebase mapped to requirements: <b>14%</b></p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 14%; background-color: hsl(16, 80%, 45%)"></div>
             </div>
         </div>
         

@@ -61,6 +61,14 @@
 <li>
     <a href="../scanner/" class="dropdown-item">Scanner</a>
 </li>
+                                    
+<li>
+    <a href="../exchange/" class="dropdown-item">Exchange</a>
+</li>
+                                    
+<li>
+    <a href="../validate/" class="dropdown-item">Validate</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -108,11 +116,19 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.models.FileStats" class="nav-link">FileStats</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-bs-level="2"><a href="#reqtrace.models.Requirement" class="nav-link">Requirement</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             <li class="nav-item" data-bs-level="2"><a href="#reqtrace.models.RequirementIndex" class="nav-link">RequirementIndex</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.models.SourceStats" class="nav-link">SourceStats</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -157,6 +173,68 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="reqtrace.models.FileStats" class="doc doc-heading">
+            <code>FileStats</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Statistics for a single source file.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>reqtrace/models.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass
+class FileStats:
+    """Statistics for a single source file."""
+
+    file_path: str
+    total_lines: int
+    mapped_lines: int
+    unmapped_ranges: List[Tuple[int, int]]
+    is_disabled: bool = False</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-class">
 
@@ -411,6 +489,69 @@ class Requirement:
     </div>
 
 </div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="reqtrace.models.SourceStats" class="doc doc-heading">
+            <code>SourceStats</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Statistics about the scanned source code.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>reqtrace/models.py</code></summary>
+                <pre class="highlight"><code class="language-python">@dataclass
+class SourceStats:
+    """Statistics about the scanned source code."""
+
+    total_files: int
+    total_lines: int
+    mapped_lines: int
+    unmapped_lines: int
+    disabled_files: int = 0
+    file_stats: List[FileStats] = field(default_factory=list)</code></pre>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
 
 
 

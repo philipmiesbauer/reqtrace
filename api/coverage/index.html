@@ -61,6 +61,14 @@
 <li>
     <a href="../scanner/" class="dropdown-item">Scanner</a>
 </li>
+                                    
+<li>
+    <a href="../exchange/" class="dropdown-item">Exchange</a>
+</li>
+                                    
+<li>
+    <a href="../validate/" class="dropdown-item">Validate</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -104,19 +112,19 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#coverage-api-reference" class="nav-link">Coverage API Reference</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.coverage" class="nav-link">coverage</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.coverage" class="nav-link">coverage</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.coverage.CoverageReport" class="nav-link">CoverageReport</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.coverage.CoverageReport" class="nav-link">CoverageReport</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.coverage.RequirementCoverage" class="nav-link">RequirementCoverage</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.coverage.RequirementCoverage" class="nav-link">RequirementCoverage</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.coverage.calculate_coverage" class="nav-link">calculate_coverage</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.coverage.calculate_coverage" class="nav-link">calculate_coverage</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -134,7 +142,7 @@
 
 
 
-<a id="reqtrace.coverage"></a>
+<a id="reqtrace.analysis.coverage"></a>
     <div class="doc doc-contents first">
 
         <p>Logic for calculating the requirement coverage matrix.</p>
@@ -162,7 +170,7 @@
 
 
 
-<h2 id="reqtrace.coverage.CoverageReport" class="doc doc-heading">
+<h2 id="reqtrace.analysis.coverage.CoverageReport" class="doc doc-heading">
             <code>CoverageReport</code>
 
 
@@ -187,7 +195,7 @@
 
 
               <details class="mkdocstrings-source">
-                <summary>Source code in <code>reqtrace/coverage.py</code></summary>
+                <summary>Source code in <code>reqtrace/analysis/coverage.py</code></summary>
                 <pre class="highlight"><code class="language-python">@dataclass
 class CoverageReport:
     """The final calculated matrix report for the entire run."""
@@ -197,7 +205,8 @@ class CoverageReport:
     partial_requirements: int
     missing_requirements: int
     coverage_details: Dict[str, RequirementCoverage] = field(default_factory=dict)
-    unmatched_traces: List[TraceMatch] = field(default_factory=list)</code></pre>
+    unmatched_traces: List[TraceMatch] = field(default_factory=list)
+    source_stats: Optional[SourceStats] = None</code></pre>
               </details>
 
 
@@ -225,7 +234,7 @@ class CoverageReport:
 
 
 
-<h2 id="reqtrace.coverage.RequirementCoverage" class="doc doc-heading">
+<h2 id="reqtrace.analysis.coverage.RequirementCoverage" class="doc doc-heading">
             <code>RequirementCoverage</code>
 
 
@@ -250,7 +259,7 @@ class CoverageReport:
 
 
               <details class="mkdocstrings-source">
-                <summary>Source code in <code>reqtrace/coverage.py</code></summary>
+                <summary>Source code in <code>reqtrace/analysis/coverage.py</code></summary>
                 <pre class="highlight"><code class="language-python">@dataclass
 class RequirementCoverage:
     """Holds calculated implementation details for a single requirement."""
@@ -286,8 +295,8 @@ class RequirementCoverage:
 <div class="doc doc-object doc-function">
 
 
-<h2 id="reqtrace.coverage.calculate_coverage" class="doc doc-heading">
-            <code class="highlight language-python">calculate_coverage(index, traces)</code>
+<h2 id="reqtrace.analysis.coverage.calculate_coverage" class="doc doc-heading">
+            <code class="highlight language-python">calculate_coverage(index, traces, file_lines=None)</code>
 
 </h2>
 
@@ -298,12 +307,19 @@ class RequirementCoverage:
 
 
             <details class="mkdocstrings-source">
-              <summary>Source code in <code>reqtrace/coverage.py</code></summary>
-              <pre class="highlight"><code class="language-python">def calculate_coverage(index: RequirementIndex, traces: List[TraceMatch]) -&gt; CoverageReport:
+              <summary>Source code in <code>reqtrace/analysis/coverage.py</code></summary>
+              <pre class="highlight"><code class="language-python">def calculate_coverage(
+    index: RequirementIndex, traces: List[TraceMatch], file_lines: Optional[Dict[str, Tuple[int, bool]]] = None
+) -&gt; CoverageReport:
     """Takes a RequirementIndex and found TraceMatches to calculate the implementation matrix."""
     details, unmatched = _apply_direct_traces(index, traces)
     _calculate_rollups(index, details)
-    return _build_report(index, details, unmatched)</code></pre>
+    report = _build_report(index, details, unmatched)
+
+    if file_lines is not None:
+        report.source_stats = _calculate_source_stats(traces, file_lines)
+
+    return report</code></pre>
             </details>
     </div>
 

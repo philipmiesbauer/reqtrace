@@ -61,6 +61,14 @@
 <li>
     <a href="../scanner/" class="dropdown-item">Scanner</a>
 </li>
+                                    
+<li>
+    <a href="../exchange/" class="dropdown-item">Exchange</a>
+</li>
+                                    
+<li>
+    <a href="../validate/" class="dropdown-item">Validate</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -173,7 +181,7 @@
     parser = argparse.ArgumentParser(description="Reqtrace: A GitOps-friendly requirements tracer.")
 
     parser.add_argument(
-        "--reqs", default=["reqs/"], nargs="+", help="Path(s) to YAML requirement files or folder containing them. (Default: reqs/)"
+        "--reqs", default=["reqs/"], nargs="+", help="Path(s) to .rqtr requirement files or folder containing them. (Default: reqs/)"
     )
 
     parser.add_argument(
@@ -211,11 +219,11 @@
 
         # 2. Scan the source code
         log.info("Scanning source code at %s...", parsed_args.src)
-        all_traces = _load_source_code(parsed_args.src)
+        all_traces, file_lines = _load_source_code(parsed_args.src)
 
         # 3. Calculate Coverage
         log.info("Calculating traceability matrix...")
-        report = calculate_coverage(req_index, all_traces)
+        report = calculate_coverage(req_index, all_traces, file_lines)
 
         # 4. Generate HTML Report (if requested)
         if parsed_args.html:
@@ -231,6 +239,15 @@
         print(f"Implemented (&gt;=100%):  {report.implemented_requirements}")
         print(f"Partial (&lt;100%):  {report.partial_requirements}")
         print(f"Missing (0%):     {report.missing_requirements}\n")
+
+        if report.source_stats:
+            print("--- SOURCE CODE COVERAGE ---")
+            print(f"Total Source Files: {report.source_stats.total_files}")
+            if report.source_stats.disabled_files &gt; 0:
+                print(f"Disabled Files:     {report.source_stats.disabled_files}")
+            print(f"Total Source Lines: {report.source_stats.total_lines}")
+            print(f"Mapped Lines:       {report.source_stats.mapped_lines}")
+            print(f"Unmapped Lines:     {report.source_stats.unmapped_lines}\n")
 
         print("--- DETAILS ---")
         for req_id, cov in report.coverage_details.items():

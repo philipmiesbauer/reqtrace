@@ -61,6 +61,14 @@
 <li>
     <a href="api/scanner/" class="dropdown-item">Scanner</a>
 </li>
+                                    
+<li>
+    <a href="api/exchange/" class="dropdown-item">Exchange</a>
+</li>
+                                    
+<li>
+    <a href="api/validate/" class="dropdown-item">Validate</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -112,6 +120,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#additional-tools" class="nav-link">🛠️ Additional Tools</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-bs-level="2"><a href="#live-traceability-report" class="nav-link">Live Traceability Report</a>
               <ul class="nav flex-column">
               </ul>
@@ -125,25 +137,39 @@
 
 <h1 id="welcome-to-reqtrace-documentation">Welcome to reqtrace Documentation</h1>
 <p><code>reqtrace</code> is a GitOps-friendly requirements tracing tool designed for modern CI/CD pipelines.</p>
-<p>It allows you to map system requirements strictly to source code implementation logic via comment tags (e.g., <code>@trace: REQ-001 (50%)</code>) and prove that the requirements are both implemented and tested.</p>
+<p>It allows you to map system requirements strictly to source code implementation logic via block-style comment tags and prove that the requirements are both implemented and tested.</p>
 <h2 id="core-concepts">Core Concepts</h2>
 <h3 id="requirements-the-what">Requirements (The What)</h3>
-<p>Requirements are written in <code>yaml</code> files. E.g.</p>
+<p>Requirements are defined in <code>.rqtr</code> files, which use YAML syntax.</p>
 <pre><code class="language-yaml">- id: REQ-001
   title: Authentication
   description: The system shall authenticate users.
 </code></pre>
 <h3 id="traceability-tags-the-how">Traceability Tags (The How)</h3>
-<p>Inside your source code (Python, Go, TS, etc.), you leave comment tags to tell the scanner what requirement a specific function implements.</p>
+<p>Inside your source code (Python, Go, TS, C++, etc.), you wrap implementation logic with start and end tags.</p>
 <pre><code class="language-python">def login_user():
-    # @trace: REQ-001
+    # @trace-start: REQ-001
+    do_login()
+    # @trace-end: REQ-001
     pass
 </code></pre>
-<h2 id="running-a-scan">Running a Scan</h2>
-<p>Run the CLI tool pointing to your requirements definition files and your source code directory:</p>
-<pre><code class="language-bash">reqtrace --reqs reqs/*.yml --src src/
+<h3 id="partial-coverage">Partial Coverage</h3>
+<p>If a requirement is implemented across multiple locations, you can specify the percentage of the requirement covered by a specific block:</p>
+<pre><code class="language-python"># @trace-start: REQ-001 (50%)
+def auth_helper():
+    pass
+# @trace-end: REQ-001
 </code></pre>
-<p>The tool will calculate a matrix and fail your CI pipeline if any coverage is missed!</p>
+<h2 id="running-a-scan">Running a Scan</h2>
+<p>Run the <code>reqtrace</code> CLI tool pointing to your requirements directory and your source code directory:</p>
+<pre><code class="language-bash">reqtrace --reqs reqs/ --src src/ --html report/
+</code></pre>
+<p>The tool will calculate a coverage matrix, generate an interactive HTML report, and fail your CI pipeline if any coverage thresholds are missed!</p>
+<h2 id="additional-tools">🛠️ Additional Tools</h2>
+<ul>
+<li><strong><code>reqtrace-validate</code></strong>: Validate your <code>.rqtr</code> files against the requirement schema.</li>
+<li><strong><code>reqtrace-exchange</code></strong>: Import from or export to ReqIF format for interoperability with other tools.</li>
+</ul>
 <h2 id="live-traceability-report">Live Traceability Report</h2>
 <p>You can explore the traceability data and implementation history for this project!
 👉 <a href="report/"><strong>View the Interactive HTML Report</strong></a></p></div>
@@ -228,5 +254,5 @@
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2026-02-28 23:00:35.672835+00:00
+Build Date UTC : 2026-03-01 01:12:16.734157+00:00
 -->

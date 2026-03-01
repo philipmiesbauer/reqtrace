@@ -2,26 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
     </url>
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/api/cli/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
     </url>
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/api/coverage/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/exchange/</loc>
+         <lastmod>2026-03-01</lastmod>
     </url>
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/api/models/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
     </url>
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/api/parser/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
     </url>
     <url>
          <loc>https://philipmiesbauer.github.io/reqtrace/api/scanner/</loc>
-         <lastmod>2026-02-28</lastmod>
+         <lastmod>2026-03-01</lastmod>
+    </url>
+    <url>
+         <loc>https://philipmiesbauer.github.io/reqtrace/api/validate/</loc>
+         <lastmod>2026-03-01</lastmod>
     </url>
 </urlset>

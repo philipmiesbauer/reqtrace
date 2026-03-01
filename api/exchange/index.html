@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://philipmiesbauer.github.io/reqtrace/api/exchange/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Exchange - reqtrace</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/color-brewer.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">reqtrace</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API Reference</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../cli/" class="dropdown-item">CLI</a>
+</li>
+                                    
+<li>
+    <a href="../coverage/" class="dropdown-item">Coverage</a>
+</li>
+                                    
+<li>
+    <a href="../models/" class="dropdown-item">Models</a>
+</li>
+                                    
+<li>
+    <a href="../parser/" class="dropdown-item">Parser</a>
+</li>
+                                    
+<li>
+    <a href="../scanner/" class="dropdown-item">Scanner</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Exchange</a>
+</li>
+                                    
+<li>
+    <a href="../validate/" class="dropdown-item">Validate</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../scanner/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../validate/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/philipmiesbauer/reqtrace/edit/master/docs/api/exchange.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#exchange-api-reference" class="nav-link">Exchange API Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_exporter" class="nav-link">reqif_exporter</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_exporter.build_reqif" class="nav-link">build_reqif</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_exporter.export_reqif" class="nav-link">export_reqif</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_importer" class="nav-link">reqif_importer</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_importer.import_reqif" class="nav-link">import_reqif</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.reqif_importer.parse_reqif" class="nav-link">parse_reqif</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.exchange_cli" class="nav-link">exchange_cli</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.exchange.exchange_cli.main" class="nav-link">main</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="exchange-api-reference">Exchange API Reference</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="reqtrace.exchange.reqif_exporter"></a>
+    <div class="doc doc-contents first">
+
+        <p>ReqIF Exporter — converts .rqtr YAML requirement files to ReqIF XML.</p>
+<p>Produces a ReqIF 1.1 document with:
+  - One SpecType (SPEC-OBJECT-TYPE) with Title and Description attribute definitions
+  - One SpecObject per requirement
+  - SpecRelations for derived_from links</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.exchange.reqif_exporter.build_reqif" class="doc doc-heading">
+            <code class="highlight language-python">build_reqif(requirements, tool_id='reqtrace-exchange')</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a ReqIF XML ElementTree from a list of requirement dicts.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>requirements</code>
+            </td>
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List of dicts with keys: id, title, description (opt),
+          derived_from (opt).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tool_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Identifier string embedded in the ReqIF header.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;reqtrace-exchange&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="xml.etree.ElementTree.ElementTree">ElementTree</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An ElementTree representing the ReqIF document.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/exchange/reqif_exporter.py</code></summary>
+              <pre class="highlight"><code class="language-python">def build_reqif(requirements: List[Dict[str, Any]], tool_id: str = "reqtrace-exchange") -&gt; ET.ElementTree:
+    """
+    Build a ReqIF XML ElementTree from a list of requirement dicts.
+
+    Args:
+        requirements: List of dicts with keys: id, title, description (opt),
+                      derived_from (opt).
+        tool_id:      Identifier string embedded in the ReqIF header.
+
+    Returns:
+        An ElementTree representing the ReqIF document.
+    """
+    ET.register_namespace("", _NS)
+    ET.register_namespace("xhtml", _XHTML_NS)
+
+    root = ET.Element(f"{{{_NS}}}REQ-IF")
+    # Note: do NOT call root.set("xmlns", ...) — ElementTree adds the xmlns
+    # declaration automatically from register_namespace when serialising.
+
+    # --- THE-HEADER ---
+    header_el = _el(root, "THE-HEADER", {})
+    _el(
+        header_el,
+        "REQ-IF-HEADER",
+        {
+            "IDENTIFIER": _uid(),
+            "CREATION-TIME": _now(),
+            "REPOSITORY-ID": tool_id,
+            "REQ-IF-TOOL-ID": tool_id,
+            "REQ-IF-VERSION": "1.1",
+            "SOURCE-TOOL-ID": tool_id,
+            "TITLE": "reqtrace export",
+        },
+    )
+
+    # --- CORE-CONTENT ---
+    core = _el(root, "CORE-CONTENT", {})
+    content = _el(core, "REQ-IF-CONTENT", {})
+
+    # DATATYPES
+    datatypes_el = _el(content, "DATATYPES", {})
+    dt_string_id = _uid()
+    _el(
+        datatypes_el,
+        "DATATYPE-DEFINITION-STRING",
+        {
+            "IDENTIFIER": dt_string_id,
+            "LAST-CHANGE": _now(),
+            "LONG-NAME": "String",
+            "MAX-LENGTH": "10000",
+        },
+    )
+
+    # SPEC-TYPES — one generic object type
+    spec_types_el = _el(content, "SPEC-TYPES", {})
+    spec_obj_type_id = _uid()
+    sot = _el(
+        spec_types_el,
+        "SPEC-OBJECT-TYPE",
+        {
+            "IDENTIFIER": spec_obj_type_id,
+            "LAST-CHANGE": _now(),
+            "LONG-NAME": "Requirement",
+        },
+    )
+    attrs_el = _el(sot, "SPEC-ATTRIBUTES", {})
+
+    # Title and Description attribute definitions
+    title_attr_id = _uid()
+    desc_attr_id = _uid()
+    for attr_id, attr_name in [(title_attr_id, "Title"), (desc_attr_id, "Description")]:
+        ad = _el(
+            attrs_el,
+            "ATTRIBUTE-DEFINITION-STRING",
+            {
+                "IDENTIFIER": attr_id,
+                "LAST-CHANGE": _now(),
+                "LONG-NAME": attr_name,
+            },
+        )
+        td = _el(ad, "TYPE", {})
+        ref = ET.SubElement(td, f"{{{_NS}}}DATATYPE-DEFINITION-STRING-REF")
+        ref.text = dt_string_id
+
+    # SPEC-OBJECTS
+    spec_objects_el = _el(content, "SPEC-OBJECTS", {})
+    id_to_identifier: Dict[str, str] = {}
+
+    for req in requirements:
+        req_id: str = req.get("id", "")
+        title: str = req.get("title", "")
+        description: str = req.get("description", "")
+
+        obj_identifier = req_id  # use the reqtrace ID directly as the ReqIF IDENTIFIER
+        id_to_identifier[req_id] = obj_identifier
+
+        so = _el(
+            spec_objects_el,
+            "SPEC-OBJECT",
+            {
+                "IDENTIFIER": obj_identifier,
+                "LAST-CHANGE": _now(),
+                "LONG-NAME": title,
+            },
+        )
+
+        # Type reference
+        tp = _el(so, "TYPE", {})
+        ref = ET.SubElement(tp, f"{{{_NS}}}SPEC-OBJECT-TYPE-REF")
+        ref.text = spec_obj_type_id
+
+        # Values
+        vals = _el(so, "VALUES", {})
+
+        # Title attribute value
+        av_title = _el(vals, "ATTRIBUTE-VALUE-STRING", {"THE-VALUE": title})
+        defn_t = _el(av_title, "DEFINITION", {})
+        r = ET.SubElement(defn_t, f"{{{_NS}}}ATTRIBUTE-DEFINITION-STRING-REF")
+        r.text = title_attr_id
+
+        # Description attribute value (optional)
+        if description:
+            av_desc = _el(vals, "ATTRIBUTE-VALUE-STRING", {"THE-VALUE": description})
+            defn_d = _el(av_desc, "DEFINITION", {})
+            rd = ET.SubElement(defn_d, f"{{{_NS}}}ATTRIBUTE-DEFINITION-STRING-REF")
+            rd.text = desc_attr_id
+
+    # SPEC-RELATION-GROUPS (empty placeholder)
+    _el(content, "SPEC-RELATION-GROUPS", {})
+
+    # SPEC-RELATIONS — derived_from links
+    spec_relations_el = _el(content, "SPEC-RELATIONS", {})
+    for req in requirements:
+        req_id = req.get("id", "")
+        for parent_id in req.get("derived_from", []):
+            rel = _el(
+                spec_relations_el,
+                "SPEC-RELATION",
+                {
+                    "IDENTIFIER": _uid(),
+                    "LAST-CHANGE": _now(),
+                },
+            )
+            _el(rel, "TYPE", {})
+            src_el = _el(rel, "SOURCE", {})
+            src_ref = ET.SubElement(src_el, f"{{{_NS}}}SPEC-OBJECT-REF")
+            src_ref.text = id_to_identifier.get(req_id, req_id)
+            tgt_el = _el(rel, "TARGET", {})
+            tgt_ref = ET.SubElement(tgt_el, f"{{{_NS}}}SPEC-OBJECT-REF")
+            tgt_ref.text = id_to_identifier.get(parent_id, parent_id)
+
+    # SPECIFICATIONS (empty)
+    _el(content, "SPECIFICATIONS", {})
+
+    ET.indent(root, space="  ")
+    return ET.ElementTree(root)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.exchange.reqif_exporter.export_reqif" class="doc doc-heading">
+            <code class="highlight language-python">export_reqif(rqtr_path, output_path)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Export a .rqtr YAML file to a ReqIF XML file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>rqtr_path</code>
+            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="pathlib.Path">Path</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Path to the source .rqtr file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>output_path</code>
+            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="pathlib.Path">Path</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Path to write the output .reqif file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/exchange/reqif_exporter.py</code></summary>
+              <pre class="highlight"><code class="language-python">def export_reqif(rqtr_path: Union[str, Path], output_path: Union[str, Path]) -&gt; None:
+    """
+    Export a .rqtr YAML file to a ReqIF XML file.
+
+    Args:
+        rqtr_path:   Path to the source .rqtr file.
+        output_path: Path to write the output .reqif file.
+    """
+    # @trace-start: REQ-EXCHANGE-EXPORT
+    rqtr = Path(rqtr_path)
+    with open(rqtr, "r", encoding="utf-8") as f:
+        requirements: List[Dict[str, Any]] = yaml.safe_load(f)
+
+    if not isinstance(requirements, list):
+        raise ValueError(f"Expected a list of requirements in '{rqtr}', got {type(requirements).__name__}")
+
+    tree = build_reqif(requirements)
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    # Write with XML declaration
+    tree.write(out, encoding="utf-8", xml_declaration=True)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="reqtrace.exchange.reqif_importer"></a>
+    <div class="doc doc-contents first">
+
+        <p>ReqIF Importer — parses a .reqif XML file and produces a .rqtr YAML file.</p>
+<p>Supports the core ReqIF 1.0 / 1.1 subset:
+  - SpecObjects   → requirements (id, title, description)
+  - SpecRelations → derived_from links</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.exchange.reqif_importer.import_reqif" class="doc doc-heading">
+            <code class="highlight language-python">import_reqif(reqif_path, output_path)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Import a ReqIF file and write the resulting requirements as a .rqtr YAML file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>reqif_path</code>
+            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="pathlib.Path">Path</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Path to the source .reqif file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>output_path</code>
+            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="pathlib.Path">Path</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Path to write the output .rqtr file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/exchange/reqif_importer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def import_reqif(reqif_path: Union[str, Path], output_path: Union[str, Path]) -&gt; None:
+    """
+    Import a ReqIF file and write the resulting requirements as a .rqtr YAML file.
+
+    Args:
+        reqif_path:  Path to the source .reqif file.
+        output_path: Path to write the output .rqtr file.
+    """
+    reqs = parse_reqif(reqif_path)
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        yaml.dump(reqs, f, allow_unicode=True, sort_keys=False, default_flow_style=False)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.exchange.reqif_importer.parse_reqif" class="doc doc-heading">
+            <code class="highlight language-python">parse_reqif(reqif_path)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Parse a ReqIF file and return a list of requirement dicts suitable for
+writing as a .rqtr YAML file.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List of dicts with keys: id, title, description (optional),</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>derived_from (optional).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/exchange/reqif_importer.py</code></summary>
+              <pre class="highlight"><code class="language-python">def parse_reqif(reqif_path: Union[str, Path]) -&gt; List[Dict[str, Any]]:
+    """
+    Parse a ReqIF file and return a list of requirement dicts suitable for
+    writing as a .rqtr YAML file.
+
+    Returns:
+        List of dicts with keys: id, title, description (optional),
+        derived_from (optional).
+    """
+    # @trace-start: REQ-EXCHANGE-IMPORT
+    path = Path(reqif_path)
+    tree = ET.parse(path)
+    root = tree.getroot()
+
+    # Strip namespace from root tag if needed (ElementTree keeps them)
+    core_content = root.find(_tag("CORE-CONTENT"))
+    if core_content is None:
+        # Try without namespace (some tools omit it)
+        core_content = root.find("CORE-CONTENT")
+    if core_content is None:
+        raise ValueError(f"No CORE-CONTENT element found in '{path}'")
+
+    req_if_content = core_content.find(_tag("REQ-IF-CONTENT"))
+    if req_if_content is None:
+        req_if_content = core_content.find("REQ-IF-CONTENT")
+    if req_if_content is None:
+        raise ValueError(f"No REQ-IF-CONTENT element found in '{path}'")
+
+    spec_objects_el = req_if_content.find(_tag("SPEC-OBJECTS"))
+    spec_relations_el = req_if_content.find(_tag("SPEC-RELATIONS"))
+
+    # Build id → requirement dict
+    requirements: Dict[str, Dict[str, Any]] = {}
+
+    if spec_objects_el is not None:
+        for spec_obj in spec_objects_el.findall(_tag("SPEC-OBJECT")):
+            obj_id = spec_obj.get("IDENTIFIER", "").strip()
+            long_name = spec_obj.get("LONG-NAME", "").strip()
+
+            req: Dict[str, Any] = {"id": obj_id, "title": long_name}
+
+            # Try to extract ATTRIBUTE-VALUEs for description
+            values_el = spec_obj.find(_tag("VALUES"))
+            if values_el is not None:
+                desc = _find_value(values_el)
+                if desc:
+                    req["description"] = desc
+
+            requirements[obj_id] = req
+
+    # Process SpecRelations: SOURCE derives from TARGET
+    if spec_relations_el is not None:
+        for relation in spec_relations_el.findall(_tag("SPEC-RELATION")):
+            source_el = relation.find(f".//{_tag('SOURCE')}/{_tag('SPEC-OBJECT-REF')}")
+            target_el = relation.find(f".//{_tag('TARGET')}/{_tag('SPEC-OBJECT-REF')}")
+            if source_el is not None and target_el is not None:
+                src_id = source_el.text.strip() if source_el.text else ""
+                tgt_id = target_el.text.strip() if target_el.text else ""
+                if src_id in requirements and tgt_id:
+                    derived = requirements[src_id].setdefault("derived_from", [])
+                    if tgt_id not in derived:
+                        derived.append(tgt_id)
+
+    return list(requirements.values())</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="reqtrace.exchange.exchange_cli"></a>
+    <div class="doc doc-contents first">
+
+        <p>CLI for reqtrace-exchange: import ReqIF → .rqtr and export .rqtr → ReqIF.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="reqtrace.exchange.exchange_cli.main" class="doc doc-heading">
+            <code class="highlight language-python">main(args=None)</code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>CLI entrypoint for reqtrace-exchange.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/exchange/exchange_cli.py</code></summary>
+              <pre class="highlight"><code class="language-python">def main(args: Optional[List[str]] = None) -&gt; None:
+    """CLI entrypoint for reqtrace-exchange."""
+    parser = argparse.ArgumentParser(
+        prog="reqtrace-exchange",
+        description="Import and export reqtrace (.rqtr) files to/from ReqIF format.",
+    )
+    _add_verbose(parser)
+
+    subparsers = parser.add_subparsers(dest="command", metavar="COMMAND")
+    subparsers.required = True
+
+    # --- import sub-command ---
+    import_parser = subparsers.add_parser(
+        "import",
+        help="Import a ReqIF file and write a .rqtr YAML file.",
+    )
+    import_parser.add_argument("input", metavar="INPUT.reqif", help="Path to the source .reqif file.")
+    import_parser.add_argument(
+        "-o",
+        "--output",
+        metavar="OUTPUT.rqtr",
+        required=True,
+        help="Path for the output .rqtr file.",
+    )
+    _add_verbose(import_parser)
+
+    # --- export sub-command ---
+    export_parser = subparsers.add_parser(
+        "export",
+        help="Export a .rqtr file as a ReqIF XML file.",
+    )
+    export_parser.add_argument("input", metavar="INPUT.rqtr", help="Path to the source .rqtr file.")
+    export_parser.add_argument(
+        "-o",
+        "--output",
+        metavar="OUTPUT.reqif",
+        required=True,
+        help="Path for the output .reqif file.",
+    )
+    _add_verbose(export_parser)
+
+    parsed = parser.parse_args(args)
+
+    logging.basicConfig(
+        level=logging.DEBUG if parsed.verbose else logging.INFO,
+        format="%(message)s",
+    )
+
+    try:
+        # @trace-start: SYS-EXCHANGE
+        if parsed.command == "import":
+            input_path = Path(parsed.input)
+            output_path = Path(parsed.output)
+            log.info("Importing '%s' → '%s' ...", input_path, output_path)
+            import_reqif(input_path, output_path)
+            log.info("✅ Import complete: %s", output_path)
+
+        elif parsed.command == "export":
+            input_path = Path(parsed.input)
+            output_path = Path(parsed.output)
+            log.info("Exporting '%s' → '%s' ...", input_path, output_path)
+            export_reqif(input_path, output_path)
+            log.info("✅ Export complete: %s", output_path)
+        # @trace-end: SYS-EXCHANGE
+
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        log.error("Error during %s: %s", parsed.command, exc)
+        sys.exit(1)
+
+    sys.exit(0)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

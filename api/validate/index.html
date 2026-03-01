@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://philipmiesbauer.github.io/reqtrace/api/parser/">
+        <link rel="canonical" href="https://philipmiesbauer.github.io/reqtrace/api/validate/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Parser - reqtrace</title>
+        <title>Validate - reqtrace</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -55,7 +55,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">Parser</a>
+    <a href="../parser/" class="dropdown-item">Parser</a>
 </li>
                                     
 <li>
@@ -67,7 +67,7 @@
 </li>
                                     
 <li>
-    <a href="../validate/" class="dropdown-item">Validate</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Validate</a>
 </li>
                                 </ul>
                             </li>
@@ -80,17 +80,17 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../models/" class="nav-link">
+                                <a rel="prev" href="../exchange/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../scanner/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://github.com/philipmiesbauer/reqtrace/edit/master/docs/api/parser.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/philipmiesbauer/reqtrace/edit/master/docs/api/validate.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -110,25 +110,21 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#parser-api-reference" class="nav-link">Parser API Reference</a>
+            <li class="nav-item" data-bs-level="1"><a href="#validate-api-reference" class="nav-link">Validate API Reference</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.parser" class="nav-link">parser</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.parser.LineLoader" class="nav-link">LineLoader</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.validate.validate_cli" class="nav-link">validate_cli</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.parser.load_requirements_file" class="nav-link">load_requirements_file</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.validate.validate_cli.main" class="nav-link">main</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.parser.load_yaml" class="nav-link">load_yaml</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.validate.validate_cli.validate_file" class="nav-link">validate_file</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.analysis.parser.parse_requirements" class="nav-link">parse_requirements</a>
+            <li class="nav-item" data-bs-level="2"><a href="#reqtrace.validate.schema" class="nav-link">schema</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -139,17 +135,17 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="parser-api-reference">Parser API Reference</h1>
+<h1 id="validate-api-reference">Validate API Reference</h1>
 
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="reqtrace.analysis.parser"></a>
+<a id="reqtrace.validate.validate_cli"></a>
     <div class="doc doc-contents first">
 
-        <p>Parser for loading YAML requirements files.</p>
+        <p>CLI for validating .rqtr requirement files against the reqtrace schema.</p>
 
 
 
@@ -170,55 +166,118 @@
 
 
 
-<div class="doc doc-object doc-class">
+
+<div class="doc doc-object doc-function">
 
 
-
-<h2 id="reqtrace.analysis.parser.LineLoader" class="doc doc-heading">
-            <code>LineLoader</code>
-
+<h2 id="reqtrace.validate.validate_cli.main" class="doc doc-heading">
+            <code class="highlight language-python">main(args=None)</code>
 
 </h2>
 
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="yaml.SafeLoader">SafeLoader</span></code></p>
+
+        <p>CLI entrypoint for reqtrace-validate.</p>
 
 
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/validate/validate_cli.py</code></summary>
+              <pre class="highlight"><code class="language-python">def main(args: Optional[List[str]] = None) -&gt; None:
+    """CLI entrypoint for reqtrace-validate."""
+    parser = argparse.ArgumentParser(
+        prog="reqtrace-validate",
+        description="Validate .rqtr requirement files against the reqtrace schema.",
+    )
+    parser.add_argument(
+        "files",
+        metavar="FILE",
+        nargs="+",
+        help="One or more .rqtr files to validate.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose (DEBUG) logging output.",
+    )
 
-        <p>Custom YAML loader that attaches line numbers to dictionaries.</p>
+    parsed = parser.parse_args(args)
+
+    logging.basicConfig(
+        level=logging.DEBUG if parsed.verbose else logging.INFO,
+        format="%(message)s",
+    )
+
+    all_valid = True
+    # @trace-start: SYS-VALIDATE
+
+    for file_str in parsed.files:
+        path = Path(file_str)
+        errors = validate_file(path)
+        if errors:
+            all_valid = False
+            print(f"❌ INVALID: {path}")
+            for err in errors:
+                print(err)
+        else:
+            print(f"✅ VALID:   {path}")
+
+    # @trace-end: SYS-VALIDATE
+    sys.exit(0 if all_valid else 1)</code></pre>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
 
 
+<h2 id="reqtrace.validate.validate_cli.validate_file" class="doc doc-heading">
+            <code class="highlight language-python">validate_file(path)</code>
+
+</h2>
 
 
+    <div class="doc doc-contents ">
+
+        <p>Load and validate a single .rqtr file against RQTR_SCHEMA.</p>
+<p>Returns a list of error messages (empty list means the file is valid).</p>
 
 
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>reqtrace/validate/validate_cli.py</code></summary>
+              <pre class="highlight"><code class="language-python">def validate_file(path: Path) -&gt; List[str]:
+    """
+    Load and validate a single .rqtr file against RQTR_SCHEMA.
 
+    Returns a list of error messages (empty list means the file is valid).
+    """
+    errors: List[str] = []
 
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>reqtrace/analysis/parser.py</code></summary>
-                <pre class="highlight"><code class="language-python">class LineLoader(yaml.SafeLoader):
-    """Custom YAML loader that attaches line numbers to dictionaries."""
+    # @trace-start: REQ-VALIDATE-SCHEMA
+    # 1. Check the file exists and is readable YAML
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+    except FileNotFoundError:
+        errors.append(f"File not found: {path}")
+        return errors
+    except yaml.YAMLError as exc:
+        errors.append(f"YAML parse error in '{path}': {exc}")
+        return errors
 
-    def construct_mapping(self, node, deep=False):
-        mapping = super().construct_mapping(node, deep=deep)
-        mapping["__line__"] = node.start_mark.line + 1
-        return mapping</code></pre>
-              </details>
+    # 2. Validate against JSON Schema
+    validator = jsonschema.Draft7Validator(RQTR_SCHEMA)
+    for error in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+        location = " -&gt; ".join(str(p) for p in error.absolute_path) if error.absolute_path else "root"
+        errors.append(f"  [{location}] {error.message}")
 
+    return errors</code></pre>
+            </details>
+    </div>
 
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
+</div>
 
 
 
@@ -228,118 +287,36 @@
 
 </div>
 
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="reqtrace.analysis.parser.load_requirements_file" class="doc doc-heading">
-            <code class="highlight language-python">load_requirements_file(filepath)</code>
-
-</h2>
+<div class="doc doc-object doc-module">
 
 
-    <div class="doc doc-contents ">
 
-        <p>Convenience function to load a YAML file and return a fully validated RequirementIndex.</p>
+<a id="reqtrace.validate.schema"></a>
+    <div class="doc doc-contents first">
 
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>reqtrace/analysis/parser.py</code></summary>
-              <pre class="highlight"><code class="language-python">def load_requirements_file(filepath: Union[str, Path]) -&gt; RequirementIndex:
-    """Convenience function to load a YAML file and return a fully validated RequirementIndex."""
-    data = load_yaml(filepath)
-    return parse_requirements(data)</code></pre>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
+        <p>JSON Schema definition for .rqtr (reqtrace) requirement files.</p>
+<p>A .rqtr file is a YAML file (list at the top level) where each item
+is a requirement object.</p>
 
 
-<h2 id="reqtrace.analysis.parser.load_yaml" class="doc doc-heading">
-            <code class="highlight language-python">load_yaml(filepath)</code>
-
-</h2>
 
 
-    <div class="doc doc-contents ">
-
-        <p>Loads a YAML file and returns a list of dictionaries.</p>
 
 
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>reqtrace/analysis/parser.py</code></summary>
-              <pre class="highlight"><code class="language-python">def load_yaml(filepath: Union[str, Path]) -&gt; List[Dict[str, Any]]:
-    """Loads a YAML file and returns a list of dictionaries."""
-    path = Path(filepath)
-    if not path.exists():
-        raise FileNotFoundError(f"File not found: {path}")
-
-    with open(path, "r", encoding="utf-8") as f:
-        data = yaml.load(f, Loader=LineLoader)
-
-    if not isinstance(data, list):
-        raise ValueError(f"Expected a list of requirements in '{filepath}', but got {type(data).__name__}")
-
-    for item in data:
-        if isinstance(item, dict):
-            item["__file__"] = str(path)
-
-    return data</code></pre>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
 
 
-<h2 id="reqtrace.analysis.parser.parse_requirements" class="doc doc-heading">
-            <code class="highlight language-python">parse_requirements(data)</code>
-
-</h2>
 
 
-    <div class="doc doc-contents ">
-
-        <p>Parses a list of dictionaries into a validated RequirementIndex.</p>
+<div class="doc doc-children">
 
 
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>reqtrace/analysis/parser.py</code></summary>
-              <pre class="highlight"><code class="language-python">def parse_requirements(data: List[Dict[str, Any]]) -&gt; RequirementIndex:
-    """Parses a list of dictionaries into a validated RequirementIndex."""
-    # @trace-start: REQ-PARSE
-    index = RequirementIndex()
 
-    for item in data:
-        if not isinstance(item, dict):
-            raise ValueError(f"Expected a dictionary for requirement, got {type(item).__name__}")
 
-        if "id" not in item:
-            raise ValueError("Requirement is missing required field: 'id'")
-        if "title" not in item:
-            raise ValueError(f"Requirement '{item['id']}' is missing required field: 'title'")
 
-        req = Requirement(
-            id=item["id"],
-            title=item["title"],
-            description=item.get("description", ""),
-            derived_from=item.get("derived_from", []),
-            file_path=item.get("__file__"),
-            line_number=item.get("__line__"),
-        )
-        index.add(req)
 
-    # Validate the entire graph after loading all items
-    index.validate_graph()
-    # @trace-end: REQ-PARSE
-    return index</code></pre>
-            </details>
-    </div>
 
-</div>
+
+
 
 
 
