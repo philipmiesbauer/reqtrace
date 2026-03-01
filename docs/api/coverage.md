@@ -1,3 +1,3 @@
 # Coverage API Reference
 
-::: reqtrace.coverage
+::: reqtrace.analysis.coverage

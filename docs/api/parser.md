@@ -1,3 +1,3 @@
 # Parser API Reference
 
-::: reqtrace.parser
+::: reqtrace.analysis.parser

@@ -1,3 +1,3 @@
 # Scanner API Reference
 
-::: reqtrace.scanner
+::: reqtrace.analysis.scanner
