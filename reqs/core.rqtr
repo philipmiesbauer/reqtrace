@@ -27,3 +27,18 @@
   title: Command Line Interface
   derived_from: [SYS-CI]
   description: The system must provide a CLI to run checks.
+
+- id: REQ-EXCHANGE-IMPORT
+  title: ReqIF Import
+  derived_from: [SYS-EXCHANGE]
+  description: The exchange tool must read a .reqif XML file and convert it to a .rqtr YAML file, preserving IDs, titles, descriptions and derivation links.
+
+- id: REQ-EXCHANGE-EXPORT
+  title: ReqIF Export
+  derived_from: [SYS-EXCHANGE]
+  description: The exchange tool must read a .rqtr YAML file and produce a valid ReqIF XML file.
+
+- id: REQ-VALIDATE-SCHEMA
+  title: Schema Validation
+  derived_from: [SYS-VALIDATE]
+  description: The validate tool must check .rqtr files against the canonical JSON Schema and report all violations.

@@ -17,12 +17,12 @@ log = logging.getLogger(__name__)
 
 
 def _load_requirements(req_path_strs: List[str]) -> List[dict]:
-    """Expand any directories into YAML files, then load all requirement data."""
+    """Expand any directories into .rqtr files, then load all requirement data."""
     req_files: List[Path] = []
     for req_path_str in req_path_strs:
         reg_path = Path(req_path_str)
         if reg_path.is_dir():
-            req_files.extend(sorted(reg_path.rglob("*.yml")))
+            req_files.extend(sorted(reg_path.rglob("*.rqtr")))
         elif reg_path.is_file():
             req_files.append(reg_path)
         else:
@@ -66,7 +66,7 @@ def main(args: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="Reqtrace: A GitOps-friendly requirements tracer.")
 
     parser.add_argument(
-        "--reqs", default=["reqs/"], nargs="+", help="Path(s) to YAML requirement files or folder containing them. (Default: reqs/)"
+        "--reqs", default=["reqs/"], nargs="+", help="Path(s) to .rqtr requirement files or folder containing them. (Default: reqs/)"
     )
 
     parser.add_argument(
