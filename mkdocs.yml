@@ -23,3 +23,5 @@ nav:
     - Models: api/models.md
     - Parser: api/parser.md
     - Scanner: api/scanner.md
+    - Exchange: api/exchange.md
+    - Validate: api/validate.md
